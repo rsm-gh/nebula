@@ -1,0 +1,18 @@
+
+
+ *** differences/implementations that I decided to do ***
+
+
++ It is possible to search (ctrl-f) at the treeviews:
+    genres, artists, playlists
+    
++ It is possible to multi-select:
+    genres, artists, albums
+
+
+
+    *** differences/implementations that I'd like to do ***
+
++ Finish the CellRendererRating
+
++ Add the albums fadeout on mouse over (Develop a custom CellRenderer)

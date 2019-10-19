@@ -1,0 +1,7 @@
+[Desktop Entry]
+Name=Andromeda
+Exec=andromeda
+Terminal=false
+Type=Application
+Icon=/usr/share/andromeda/images/logo_x64.png
+Categories=GTK;Audio;Music;Player;

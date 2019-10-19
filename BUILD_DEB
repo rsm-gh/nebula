@@ -1,0 +1,10 @@
+
+Arguments:--dont-sign-targz,--debian-targz
+
+CodeName:jessie
+RepositoryLocation:/web/downloads/REPOSITORY
+
+CopyChangelog:/web/downloads/REPOSITORY/pool/main/a/androemda
+TarGzLocation:/web/downloads/REPOSITORY/pool/main/a/andromeda
+
+

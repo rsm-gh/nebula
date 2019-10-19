@@ -1,0 +1,95 @@
+#!/usr/bin/python3
+#
+
+#  Copyright (C) 2016  Rafael Senties Martinelli 
+#
+#  This program is free software; you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License 3 as published by
+#   the Free Software Foundation.
+#
+#  This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+#   along with this program; if not, write to the Free Software Foundation,
+#   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA.
+
+
+import sys
+sys.path.insert(1,'/usr/share/andromeda/')
+
+if len(sys.argv) == 1:
+    """
+        Start the GUI
+    """
+    from GUI import *
+    GObject.threads_init()
+    Gdk.threads_init()
+    main=GUI()
+    Gtk.main()
+
+elif len(sys.argv) >= 2:
+    """
+        Do some console command
+    """
+    
+    arg = sys.argv[1]
+    
+    if arg in ['--next','--play','--play-pause','--pause','--stop']:
+        """
+            Communicate with the GUI
+        """
+        import socket
+        import os
+        from Paths import Paths; PATHS=Paths()
+        
+        if arg == '--next':
+            code=100
+        elif arg == '--play':
+            code=150
+        elif arg == '--play-pause':
+            code=175
+        elif arg == '--pause':
+            code=200
+        elif arg == '--stop':
+            code=250
+        
+        code=bytes(str(code), 'utf-8')
+        
+        if os.path.exists(PATHS.port):
+            with open(PATHS.port, mode='rt', encoding='utf-8') as f:
+                port=int(f.read())
+
+            clientsocket=socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            clientsocket.settimeout(1)
+            clientsocket.connect(('localhost', port))
+            clientsocket.send(code)
+            clientsocket.close()
+
+        else:
+            print("Error: Andromeda is not running or the port file is missing.")
+            print("If Andromeda is running use: Settings > Port > Save")
+        
+        
+    elif arg in ['--help','-h']:
+        print('''
+Usage: andromeda [options..]
+
+Playback Control Options
+
+    --next                     Play the next track.
+    --play                     Start playback
+    --play-pause               Toggle playback
+    --pause                    Pause playback
+    --stop                     Completely stop playback
+''')
+    else:
+        print("Wrong Argument, use --help to know more about the commands.")
+        
+    
+    
+    
+
+

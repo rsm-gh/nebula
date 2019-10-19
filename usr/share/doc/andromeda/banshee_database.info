@@ -1,0 +1,329 @@
+table
+CoreConfiguration
+CoreConfiguration
+2
+CREATE TABLE CoreConfiguration (
+                    EntryID             INTEGER PRIMARY KEY,
+                    Key                 TEXT,
+                    Value               TEXT
+                )
+
+table
+CorePrimarySources
+CorePrimarySources
+3
+CREATE TABLE CorePrimarySources (
+                    PrimarySourceID     INTEGER PRIMARY KEY,
+                    StringID            TEXT UNIQUE,
+                    CachedCount         INTEGER,
+                    IsTemporary         INTEGER DEFAULT 0
+                )
+
+table
+CoreTracks
+CoreTracks
+5
+CREATE TABLE CoreTracks (
+                    PrimarySourceID     INTEGER NOT NULL,
+                    TrackID             INTEGER PRIMARY KEY,
+                    ArtistID            INTEGER,
+                    AlbumID             INTEGER,
+                    TagSetID            INTEGER,
+                    ExternalID          INTEGER,
+
+                    MusicBrainzID       TEXT,
+
+                    Uri                 TEXT,
+                    MimeType            TEXT,
+                    FileSize            INTEGER,
+                    BitRate             INTEGER,
+                    SampleRate          INTEGER,
+                    BitsPerSample       INTEGER,
+                    Attributes          INTEGER DEFAULT 5,
+                    LastStreamError     INTEGER DEFAULT 0,
+
+                    Title               TEXT,
+                    TitleLowered        TEXT,
+                    TitleSort           TEXT,
+                    TitleSortKey        BLOB,
+                    TrackNumber         INTEGER,
+                    TrackCount          INTEGER,
+                    Disc                INTEGER,
+                    DiscCount           INTEGER,
+                    Duration            INTEGER,
+                    Year                INTEGER,
+                    Genre               TEXT,
+                    Composer            TEXT,
+                    Conductor           TEXT,
+                    Grouping            TEXT,
+                    Copyright           TEXT,
+                    LicenseUri          TEXT,
+
+                    Comment             TEXT,
+                    Rating              INTEGER,
+                    Score               INTEGER,
+                    PlayCount           INTEGER,
+                    SkipCount           INTEGER,
+                    LastPlayedStamp     INTEGER,
+                    LastSkippedStamp    INTEGER,
+                    DateAddedStamp      INTEGER,
+                    DateUpdatedStamp    INTEGER,
+                    MetadataHash        TEXT,
+                    BPM                 INTEGER,
+                    LastSyncedStamp     INTEGER,
+                    FileModifiedStamp   INTEGER
+                )
+
+table
+CoreAlbums
+CoreAlbums
+15
+CREATE TABLE CoreAlbums (
+                    AlbumID             INTEGER PRIMARY KEY,
+                    ArtistID            INTEGER,
+                    TagSetID            INTEGER,
+
+                    MusicBrainzID       TEXT,
+
+                    Title               TEXT,
+                    TitleLowered        TEXT,
+                    TitleSort           TEXT,
+                    TitleSortKey        BLOB,
+
+                    ReleaseDate         INTEGER,
+                    Duration            INTEGER,
+                    Year                INTEGER,
+                    IsCompilation       INTEGER DEFAULT 0,
+
+                    ArtistName          TEXT,
+                    ArtistNameLowered   TEXT,
+                    ArtistNameSort      TEXT,
+                    ArtistNameSortKey   BLOB,
+
+                    Rating              INTEGER,
+
+                    ArtworkID           TEXT
+                )
+
+table
+CoreArtists
+CoreArtists
+20
+CREATE TABLE CoreArtists (
+                    ArtistID            INTEGER PRIMARY KEY,
+                    TagSetID            INTEGER,
+                    MusicBrainzID       TEXT,
+                    Name                TEXT,
+                    NameLowered         TEXT,
+                    NameSort            TEXT,
+                    NameSortKey         BLOB,
+                    Rating              INTEGER
+                )
+
+table
+CorePlaylists
+CorePlaylists
+22
+CREATE TABLE CorePlaylists (
+                    PrimarySourceID     INTEGER,
+                    PlaylistID          INTEGER PRIMARY KEY,
+                    Name                TEXT,
+                    SortColumn          INTEGER NOT NULL DEFAULT -1,
+                    SortType            INTEGER NOT NULL DEFAULT 0,
+                    Special             INTEGER NOT NULL DEFAULT 0,
+                    CachedCount         INTEGER,
+                    IsTemporary         INTEGER DEFAULT 0
+                )
+
+table
+CorePlaylistEntries
+CorePlaylistEntries
+24
+CREATE TABLE CorePlaylistEntries (
+                    EntryID             INTEGER PRIMARY KEY,
+                    PlaylistID          INTEGER NOT NULL,
+                    TrackID             INTEGER NOT NULL,
+                    ViewOrder           INTEGER NOT NULL DEFAULT 0,
+                    Generated           INTEGER NOT NULL DEFAULT 0
+                )
+
+table
+CoreSmartPlaylists
+CoreSmartPlaylists
+27
+CREATE TABLE CoreSmartPlaylists (
+                    PrimarySourceID     INTEGER,
+                    SmartPlaylistID     INTEGER PRIMARY KEY,
+                    Name                TEXT NOT NULL,
+                    Condition           TEXT,
+                    OrderBy             TEXT,
+                    LimitNumber         TEXT,
+                    LimitCriterion      TEXT,
+                    CachedCount         INTEGER,
+                    IsTemporary         INTEGER DEFAULT 0,
+                    IsHiddenWhenEmpty   INTEGER DEFAULT 0
+                )
+
+table
+CoreSmartPlaylistEntries
+CoreSmartPlaylistEntries
+28
+CREATE TABLE CoreSmartPlaylistEntries (
+                    EntryID             INTEGER PRIMARY KEY,
+                    SmartPlaylistID     INTEGER NOT NULL,
+                    TrackID             INTEGER NOT NULL
+                )
+
+table
+CoreRemovedTracks
+CoreRemovedTracks
+31
+CREATE TABLE CoreRemovedTracks (
+                    TrackID             INTEGER NOT NULL,
+                    Uri                 TEXT,
+                    DateRemovedStamp    INTEGER
+                )
+
+table
+CoreCacheModels
+CoreCacheModels
+32
+CREATE TABLE CoreCacheModels (
+                    CacheID             INTEGER PRIMARY KEY,
+                    ModelID             TEXT
+                )
+
+table
+CoreShuffles
+CoreShuffles
+33
+CREATE TABLE CoreShuffles (
+                    ShufflerId           INTEGER,
+                    TrackID             INTEGER,
+                    LastShuffledAt      INTEGER,
+                    CONSTRAINT one_entry_per_track UNIQUE (ShufflerID, TrackID)
+                )
+
+table
+CoreShufflers
+CoreShufflers
+37
+CREATE TABLE CoreShufflers (
+                    ShufflerId      INTEGER PRIMARY KEY,
+                    Id              TEXT UNIQUE
+                )
+
+table
+CoreShuffleModifications
+CoreShuffleModifications
+39
+CREATE TABLE CoreShuffleModifications (
+                    ShufflerId           INTEGER,
+                    TrackID              INTEGER,
+                    LastModifiedAt       INTEGER,
+                    ModificationType     INTEGER,
+                    CONSTRAINT one_entry_per_track UNIQUE (ShufflerID, TrackID)
+                )
+
+table
+sqlite_stat1
+sqlite_stat1
+43
+CREATE TABLE sqlite_stat1(tbl,idx,stat)
+
+table
+CoverArtDownloads
+CoverArtDownloads
+44
+CREATE TABLE CoverArtDownloads (
+                        AlbumID     INTEGER UNIQUE,
+                        Downloaded  BOOLEAN,
+                        LastAttempt INTEGER NOT NULL
+                    )
+
+table
+LastfmStations
+LastfmStations
+54
+CREATE TABLE LastfmStations (
+                        StationID           INTEGER PRIMARY KEY,
+                        Creator             STRING NOT NULL,
+                        Name                STRING NOT NULL,
+                        Type                STRING NOT NULL,
+                        Arg                 STRING NOT NULL,
+                        PlayCount           INTEGER NOT NULL
+                    )
+
+table
+IaItems
+IaItems
+56
+CREATE TABLE IaItems (
+                        ItemID         INTEGER PRIMARY KEY,
+                        ID             TEXT UNIQUE NOT NULL,
+                        Title          TEXT NOT NULL,
+                        MediaType      TEXT,
+                        DetailsJson    TEXT,
+
+                        SelectedFormat TEXT,
+                        BookmarkFile   TEXT,
+                        BookmarkPosition INTEGER DEFAULT 0
+                    )
+
+table
+HyenaModelVersions
+HyenaModelVersions
+60
+CREATE TABLE HyenaModelVersions (
+                        id INTEGER PRIMARY KEY,
+                        name TEXT UNIQUE,
+                        version INTEGER)
+
+table
+PodcastSyndications
+PodcastSyndications
+62
+CREATE TABLE PodcastSyndications(last_auto_download INTEGER,AutoDownload INTEGER,DownloadStatus INTEGER,IsSubscribed INTEGER,FeedID INTEGER PRIMARY KEY,Title TEXT,Description TEXT,Url TEXT,Keywords TEXT,Category TEXT,Copyright TEXT,ImageUrl TEXT,UpdatePeriodMinutes INTEGER,Language TEXT,LastDownloadError INTEGER,LastDownloadTime INTEGER,Link TEXT,MaxItemCount INTEGER,PubDate INTEGER,LastBuildDate INTEGER,SyncSetting INTEGER)
+
+table
+PodcastItems
+PodcastItems
+65
+CREATE TABLE PodcastItems(FeedID INTEGER,LicenseUri TEXT,ItemID INTEGER PRIMARY KEY,Author TEXT,Comments TEXT,Description TEXT,StrippedDescription TEXT,Guid TEXT,IsRead INTEGER,Link TEXT,Modified INTEGER,PubDate INTEGER,Title TEXT,Active INTEGER)
+
+table
+PodcastEnclosures
+PodcastEnclosures
+70
+CREATE TABLE PodcastEnclosures(ItemID INTEGER,EnclosureID INTEGER PRIMARY KEY,LocalPath TEXT,Url TEXT,Keywords TEXT,Duration INTEGER,FileSize INTEGER,MimeType TEXT,DownloadedAt INTEGER,DownloadStatus INTEGER)
+
+table
+Bookmarks
+Bookmarks
+1933
+CREATE TABLE Bookmarks(BookmarkId INTEGER PRIMARY KEY,Position INTEGER,CreatedAt INTEGER,Type TEXT,TrackId INTEGER)
+
+table
+AnonymousUsageData
+AnonymousUsageData
+5806
+CREATE TABLE AnonymousUsageData(MetricName TEXT,Stamp INTEGER,Value TEXT,Id INTEGER PRIMARY KEY)
+
+table
+MetadataProblems
+MetadataProblems
+367
+CREATE TABLE MetadataProblems (
+                        ProblemID   INTEGER PRIMARY KEY,
+                        ProblemType TEXT NOT NULL,
+                        TypeOrder   INTEGER NOT NULL,
+                        Generation  INTEGER NOT NULL,
+                        Selected    INTEGER DEFAULT 1,
+
+                        SolutionValue       TEXT,
+                        SolutionOptions     TEXT,
+                        ObjectIds   TEXT,
+                        ObjectCount INTEGER,
+
+                        UNIQUE (ProblemType, Generation, ObjectIds) ON CONFLICT IGNORE
+                    )
