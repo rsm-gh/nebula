@@ -1,7 +1,4 @@
-Andromeda music player.
-
 ![Andromeda GUI](https://raw.githubusercontent.com/rsm-gh/andromeda/master/usr/share/doc/andromeda/preview.jpeg)
-
 
 Andromeda is a music player powered by Python3, GTK3 and pyVLC. It has been developed for GNU/Linux Systems and its look and behavior is pretty similar to [Banshee](http://banshee.fm).
 
