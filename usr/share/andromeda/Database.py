@@ -24,7 +24,6 @@
 """
 
 import sqlite3
-import time
 import os
 import urllib.parse
 

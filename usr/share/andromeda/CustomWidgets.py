@@ -39,7 +39,7 @@
 import gi
 gi.require_version('Gtk', '3.0')
 gi.require_version('PangoCairo', '1.0')
-from gi.repository import Gtk, Gdk, cairo, Pango, PangoCairo, GObject
+from gi.repository import Gtk, Gdk, Pango, PangoCairo, GObject
 from gi.repository.GdkPixbuf import Pixbuf
 from gi.repository.Gdk import cairo_set_source_pixbuf
 
@@ -122,7 +122,7 @@ class CellRendererTrackTime(Gtk.CellRenderer):
         super().__init__()
         self.miliseconds = 0
         
-    def activate(event, widget, path, background_area, cell_area, flags):
+    def activate(self, event, widget, path, background_area, cell_area, flags):
         print(flags)
         
     def do_set_property(self, pspec, value):
@@ -179,7 +179,7 @@ class CellRendererBytes(Gtk.CellRenderer):
         super().__init__()
         self.bytes = 0
         
-    def activate(event, widget, path, background_area, cell_area, flags):
+    def activate(self, event, widget, path, background_area, cell_area, flags):
         print(flags)
         
     def do_set_property(self, pspec, value):
@@ -233,7 +233,7 @@ class CellRendererTimeStamp(Gtk.CellRenderer):
         super().__init__()
         self.timestamp = 0
         
-    def activate(event, widget, path, background_area, cell_area, flags):
+    def activate(self, event, widget, path, background_area, cell_area, flags):
         print(flags)
         
     def do_set_property(self, pspec, value):
@@ -285,7 +285,7 @@ class CellRendererURI(Gtk.CellRenderer):
         super().__init__()
         self.uri = ''
         
-    def activate(event, widget, path, background_area, cell_area, flags):
+    def activate(self, event, widget, path, background_area, cell_area, flags):
         print(flags)
         
     def do_set_property(self, pspec, value):
@@ -343,7 +343,7 @@ class CellRendererLongText(Gtk.CellRenderer):
         super().__init__()
         self.text = ''
         
-    def activate(event, widget, path, background_area, cell_area, flags):
+    def activate(self, event, widget, path, background_area, cell_area, flags):
         print(flags)
         
     def do_set_property(self, pspec, value):

@@ -45,11 +45,9 @@ import gi
 gi.require_version('Gtk', '3.0')
 gi.require_version('AppIndicator3', '0.1')
 gi.require_version('Notify', '0.7')
-from gi.repository import Gtk, GObject, GLib, Gdk, Notify
+from gi.repository import Notify
 from gi.repository import AppIndicator3 as appindicator
-from gi.repository.GdkPixbuf import Pixbuf
 
-import os
 import sys
 import socket
 import traceback
@@ -58,10 +56,7 @@ from html import escape
 from threading import Thread
 from time import sleep, time
 from fnmatch import fnmatch
-from datetime import timedelta, datetime
 from random import choice, shuffle
-from collections import deque
-from copy import deepcopy
 
 from CCParser import CCParser
 
