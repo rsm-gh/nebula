@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 #
 
-#  Copyright (C) 2016  Rafael Senties Martinelli 
+#  Copyright (C) 2016, 2019  Rafael Senties Martinelli 
 #
 #  This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License 3 as published by
@@ -315,7 +315,7 @@ class GUI(Gtk.Window):
                 'menuitem_repeat','menuitem_shuffle_off','menuitem_shuffle_by_track','radiomenuitem_repeat_off',
                     'radiomenuitem_repeat_all','menuitem_edit_tracks',
                 'button_RT_play_pause','toolbutton_RT_next','searchentry','box_current_album','volumebutton','scale_RT_track_progress',
-                'spinner','expander_more',
+                'spinner',
                 'box_playing','box_queue','box_playing','box_historial','box_top_queue_tools','box_historial_tools',
                 
             'indicator_menu',
@@ -463,8 +463,6 @@ class GUI(Gtk.Window):
         self.box_playing.show()
         self.box_top_queue_tools.hide()
         self.box_historial_tools.hide()
-        
-        self.expander_more.set_expanded(self.ccp.get_bool_defval('expander_more', True))
         
         
         shuffle=self.ccp.get_str_defval('shuffle', 'tracks')
@@ -2140,14 +2138,6 @@ class GUI(Gtk.Window):
     def on_button_about_RT_clicked(self, button, data=None):
         self.dialog_about.run()
         self.dialog_about.hide()
-
-    def on_expander_RT_more_activate(self, widget, data=None):
-        if widget.get_expanded():
-            widget.set_label("More")
-            self.ccp.write('expander_more',False)
-        else:
-            widget.set_label("")
-            self.ccp.write('expander_more',True)
                 
     def on_button_TE_back_clicked(self, button, data=None):
         self.TRACK_EDITOR_update_cache()
