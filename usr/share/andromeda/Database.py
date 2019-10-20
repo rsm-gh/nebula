@@ -305,17 +305,21 @@ ORDER BY T.Uri'''.format(self._standard_track_query))
             if not os.path.exists(track_path):
                 track_ids.append(track_id)
 
-        return track_ids
-    
+        return track_ids    
     
     def delete_playlist(self, playlist_id):
         self._cursor.execute('''DELETE FROM CorePlaylistEntries WHERE PlaylistID = ?''', (playlist_id,))
         self._cursor.execute('''DELETE FROM CorePlaylists WHERE PlaylistID = ?''', (playlist_id,))
         self._connection.commit()
 
+    def delete_track(self, track_id):
+        self._cursor.execute('''DELETE FROM CoreTracks WHERE TrackID = ?''', (track_id,))
+        self._connection.commit()
+
+
     def clean_tracks_with_unexistent_uri(self):
         
-        track_ids=get_track_ids_with_unexisting_uri()
+        track_ids=self.get_track_ids_with_unexisting_uri()
         query='''DELETE FROM CoreTracks WHERE NOT TrackID IN ({})'''.format(','.join('?'*len(track_ids)))
 
         self._cursor.execute(query, track_ids)

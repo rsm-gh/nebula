@@ -115,7 +115,7 @@ def get_plugins_data():
             
                 if not module_name in plugins_dict.keys():
                     plugins_dict[filename[:-3]]=data
-            except Exception as e:
+            except Exception:
                 print(traceback.format_exc())
     
     return plugins_dict
@@ -203,20 +203,20 @@ def gtk_select_row_from_cell(gtk_treeview, column, cellvalue, safe_thread=False)
     gtk_selection=gtk_treeview.get_selection()
 
     if cellvalue is None:
-        iter=gtk_liststore.get_iter_first()
+        liststore_iter=gtk_liststore.get_iter_first()
     else:
-        iter=gtk_get_iter_from_liststore_cell(gtk_liststore, cellvalue, column)
+        liststore_iter=gtk_get_iter_from_liststore_cell(gtk_liststore, cellvalue, column)
     
-        if iter is None:
-            iter=gtk_liststore.get_iter_first()
+        if liststore_iter is None:
+            liststore_iter=gtk_liststore.get_iter_first()
 
-    if iter is not None: # when a liststore is empty
+    if liststore_iter is not None: # when a liststore is empty
         if not safe_thread:
             Gdk.threads_enter()
-            gtk_selection.select_iter(iter)
+            gtk_selection.select_iter(liststore_iter)
             Gdk.threads_leave()
         else:
-            gtk_selection.select_iter(iter)
+            gtk_selection.select_iter(liststore_iter)
 
 
 def gtk_shuffle_treeview(gtk_treeview):
@@ -261,7 +261,7 @@ def gtk_treeview_selection_is_okay(treeview, event):
     treeview_selection=treeview.get_selection()
 
     # if the iter is not in the selected iters, remove the previous selection
-    model, treepaths = treeview_selection.get_selected_rows()
+    _, treepaths = treeview_selection.get_selected_rows()
     
     if not pointing_treepath in treepaths:
         treeview_selection.unselect_all()
@@ -810,7 +810,7 @@ class GUI(Gtk.Window):
             For the moment it only scans for simple codes of 3 numbers.
         """
         while self.keep_threads_alive:
-            connection, address = self.serversocket.accept()
+            connection, _ = self.serversocket.accept()
             data=int(connection.recv(3).decode('utf-8'))
 
             if data == 100:
@@ -868,7 +868,7 @@ class GUI(Gtk.Window):
                 track_length_str=FORMAT_miliseconds(track_length)
                 
                 player_is_playing=self.player.is_playing()
-                player_is_paused=self.player.is_paused()
+                #player_is_paused=self.player.is_paused()
                 
                 while player_is_playing and self.current_track_id == track_id:
                     
@@ -889,7 +889,7 @@ class GUI(Gtk.Window):
                         Gdk.threads_leave()
                 
                     player_is_playing=self.player.is_playing()
-                    player_is_paused=self.player.is_paused()
+                    #player_is_paused=self.player.is_paused()
                     
                     sleep(.5)
                     
@@ -1079,12 +1079,12 @@ class GUI(Gtk.Window):
             #
             self.liststore_artists.append([-1, "All Artists ({})".format(len(artists))])
             
-            for id, artist in artists:
+            for artist_id, artist in artists:
                 if self.populating_abort:
                     self.populating_state[0]=False
                     return
                 
-                self.liststore_artists.append([id, str(artist)])
+                self.liststore_artists.append([artist_id, str(artist)])
                 
                 
             Gdk.threads_enter()
@@ -1323,18 +1323,18 @@ class GUI(Gtk.Window):
         self.liststore_playlists.clear()
         Gdk.threads_leave()
         
-        for id, name in self.db_playlists.get_playlists():
+        for playlist_id, playlist_name in self.db_playlists.get_playlists():
             
             image=Gtk.Image()
             image.set_from_file(PATHS.playlist)
             pixbuf = image.get_pixbuf()
             
             Gdk.threads_enter()
-            self.liststore_playlists.append([   id, 
-                                                False, 
-                                                name, 
-                                                self.db_playlists.get_playlist_tracks_count(id),
-                                                pixbuf])
+            self.liststore_playlists.append([playlist_id, 
+                                             False, 
+                                             playlist_name, 
+                                             self.db_playlists.get_playlist_tracks_count(playlist_id),
+                                             pixbuf])
             Gdk.threads_leave()
 
 
@@ -1392,9 +1392,9 @@ class GUI(Gtk.Window):
             and append a population request.
         """
         
-        filter=self.searchentry.get_text()
-        if filter=='':
-            filter=None
+        request_filter=self.searchentry.get_text()
+        if request_filter=='':
+            request_filter=None
 
         # Get the selected genres
         #
@@ -1433,7 +1433,12 @@ class GUI(Gtk.Window):
         
         # Append the query
         #
-        self._populate_queue.append((filter, playlist_id, selected_genres, selected_artist_ids, selected_album_ids, play_track))
+        self._populate_queue.append((request_filter, 
+                                     playlist_id, 
+                                     selected_genres, 
+                                     selected_artist_ids, 
+                                     selected_album_ids, 
+                                     play_track))
     
     def PLAY_track(self, track_id, safe_thread=False):
 
@@ -1640,11 +1645,11 @@ class GUI(Gtk.Window):
                     track=choice(self.cache_tracks)
     
                     track_id=track[0]
-                    title=track[2]
-                    album=track[3]
-                    artist_name=track[4]
-                    path=track[14]
-                    album_id=track[17]
+                    #title=track[2]
+                    #album=track[3]
+                    #artist_name=track[4]
+                    #path=track[14]
+                    #album_id=track[17]
                     
                     if dont_repeat:
                         if not gtk_liststore_has_value(self.liststore_tracks_historial, track_id):
@@ -1703,7 +1708,7 @@ class GUI(Gtk.Window):
             is to return the treeview_selection that is currently seen by the user.
         """
         
-        model, treepaths = self.treeview_selection_general_playlists.get_selected_rows()
+        _, treepaths = self.treeview_selection_general_playlists.get_selected_rows()
        
         selection=-2
         for treepath in treepaths:
@@ -1774,27 +1779,29 @@ class GUI(Gtk.Window):
         #
 
         for item, position in TE_STRING_TO_STRING:
-            object=getattr(self, item)
+            
+            obj=getattr(self, item)
             # The try exception is for when the field = None
-            if object.get_sensitive() or not previous_track_data:
+            if obj.get_sensitive() or not previous_track_data:
                 data=track_data[position]
             else:
                 data=previous_track_data[position]
                 
             try:
-                object.set_text(data)
+                obj.set_text(data)
             except:
-                object.set_text("")
+                obj.set_text("")
 
         for item, position in TE_INT_TO_INT:
-            object=getattr(self, item)
+            
+            obj=getattr(self, item)
 
-            if object.get_sensitive() or not previous_track_data:
+            if obj.get_sensitive() or not previous_track_data:
                 data=track_data[position]
             else:
                 data=previous_track_data[position]
 
-            object.set_value(data)
+            obj.set_value(data)
 
 
         # Update the track label
@@ -1882,12 +1889,14 @@ class GUI(Gtk.Window):
     def on_volumebutton_RT_value_changed(self, widget, value):
         self.player.set_volume(value)
 
-    def on_menuitem_tracks_clicked(self, checkmenuitem, id):
+    def on_menuitem_tracks_clicked(self, checkmenuitem, track_id):
+
+        print("CALLED")
 
         config_name=label_to_configuration_name('treeview_'+checkmenuitem.get_label())
-        treeviewcolumn = getattr(self, 'treeviewcolumn'+str(id))
-        treeviewcolumn_q = getattr(self, 'treeviewcolumn_q'+str(id))
-        treeviewcolumn_h = getattr(self, 'treeviewcolumn_h'+str(id))
+        treeviewcolumn = getattr(self, 'treeviewcolumn'+str(track_id))
+        treeviewcolumn_q = getattr(self, 'treeviewcolumn_q'+str(track_id))
+        treeviewcolumn_h = getattr(self, 'treeviewcolumn_h'+str(track_id))
         
         if checkmenuitem.get_active():
             treeviewcolumn.set_visible(True)
@@ -1974,9 +1983,7 @@ class GUI(Gtk.Window):
 
             # Display the right box
             #
-            model, treepaths = treeview.get_selection().get_selected_rows()
-            
-            rows=(self.box_playing, self.box_queue, self.box_historial)
+            _, treepaths = treeview.get_selection().get_selected_rows()
             
             treepath=0
             for treepath in treepaths:
@@ -2031,7 +2038,7 @@ class GUI(Gtk.Window):
             self.box_historial.hide()
             self.box_playing.show()
             
-            model, treepaths = treeview.get_selection().get_selected_rows()
+            _, treepaths = treeview.get_selection().get_selected_rows()
             
             if treepaths != []:
                 if self._treeview_playlists_double_clicked:
@@ -2199,13 +2206,13 @@ class GUI(Gtk.Window):
                 plugin=__import__(plugin_name)
                 plugin.load_imports()
                 setattr(self, plugin_name, plugin.Main(self, False))
-            except Exception as e:
+            except Exception:
                 print(traceback.format_exc())
                 
         else:
             try:
                 getattr(self, plugin_name).deactivate_plugin()
-            except Exception as e:
+            except Exception:
                 print(traceback.format_exc())
         
 
