@@ -62,6 +62,7 @@ install_files "/usr/bin"
 install_files "/usr/share/applications"
 
 install_files "/usr/share/andromeda"
+install_files "/usr/share/andromeda/CellRenderers"
 install_files "/usr/share/andromeda/images"
 
 install_files "/usr/share/doc/andromeda"
@@ -69,6 +70,7 @@ install_files "/usr/share/doc/andromeda/code"
 
 install_files "/etc/andromeda"
 install_files "/etc/andromeda/pluggins"
+
 
 
 #
