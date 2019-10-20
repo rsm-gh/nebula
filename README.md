@@ -4,6 +4,11 @@ Andromeda is a music player powered by Python3, GTK3 and pyVLC. It has been deve
 
 Unless you want to try experimental software or contribute to the project you should not yet use it.
 
-## Installation
+## How to Install
 
-libgtk-3-0 (>= 3.10), vlc, python3, python3-gi, python3-gi-cairo
+1. Download the [stable branch](https://github.com/rsm-gh/andromeda/archive/master.zip).
+2. Install the dependencies:
+    * Debian based distributions: `libgtk-3-0 (>= 3.10), vlc, python3, python3-gi, python3-gi-cairo`
+    * ArchLinux: `?`
+
+3. Execute the setup file.
