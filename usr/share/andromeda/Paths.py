@@ -36,7 +36,7 @@ class Paths:
         self.albums_current='/home/{}/.cache/media-art/36/{}.jpg'.format(user,'{}')
 
         self.port='/tmp/{}-banshee-port'.format(user)
-        self.plugins_dir='/etc/andromeda/'
+        self.plugins_dir='/etc/andromeda/pluggins/'
 
 
         # local

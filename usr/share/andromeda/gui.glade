@@ -2957,9 +2957,9 @@ audio-volume-medium-symbolic</property>
     <property name="type_hint">dialog</property>
     <property name="transient_for">window_root</property>
     <property name="program_name">Andromeda Music Player</property>
-    <property name="version">vDEB_BUILDER_VERSION</property>
-    <property name="copyright" translatable="yes">(C) 2016 Rafael Senties Martinelli</property>
-    <property name="website">https://rsm.website/software/gnu-linux/software/andromeda</property>
+    <property name="version">v__ANDROMEDA_VERSION__</property>
+    <property name="copyright" translatable="yes">(C) 2016, 2019 Rafael Senties Martinelli</property>
+    <property name="website">https://github.com/rsm-gh/andromeda</property>
     <property name="logo">images/logo_x128.png</property>
     <property name="license_type">lgpl-3-0</property>
     <child internal-child="vbox">

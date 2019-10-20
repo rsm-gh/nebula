@@ -15,8 +15,32 @@
 #   along with this program; if not, write to the Free Software Foundation,
 #   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA.
 
-if ! [ -d /etc/andromeda/ ]; then
-    mkdir /etc/andromeda
+DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+
+
+if [ "$EUID" -ne 0 ]
+  then echo "Please run as root."
+  exit
 fi
 
-cp /usr/share/andromeda/extra/RandomPlaylist.py /etc/andromeda/RandomPlaylist.py
+if [ -f /usr/bin/andromeda ]; then
+	rm -f /usr/bin/andromeda
+fi
+
+if [ -d /usr/share/andromeda ]; then
+	rm -rf /usr/share/andromeda
+fi
+
+if [ -d /usr/share/doc/andromeda ]; then
+	rm -rf /usr/share/doc/andromeda
+fi
+
+if [ "$1" != "-s" ]; then
+	if [ -d /etc/andromeda/ ]; then
+	   rm -rf /etc/andromeda
+	fi
+fi
+
+
+
+echo "The removal is complete."

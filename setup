@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#  Copyright (C) 2016  Rafael Senties Martinelli 
+#  Copyright (C) 2015-2019  Rafael Senties Martinelli
 #
 #  This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License 3 as published by
@@ -15,43 +15,72 @@
 #   along with this program; if not, write to the Free Software Foundation,
 #   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA.
 
-DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
-cd $DIR
-#
-#
+ANDROMEDA_VERSION="2019.10.20"
+NUMBER_OF_STEPS=2
+
 if [ "$EUID" -ne 0 ]
-  then echo "Please run as root."
+  then echo -e "\e[00;31m The script must be run as root.\e[00m"
   exit
 fi
-#
-#
-echo -e "\n\e[00;33m Before installing check that all the following depences are installed: \e[00m \n "
-while read line; do
-	depends="Depends:"
-	if [[ "$line" =~ "$depends" ]]; then
-		echo ${line#${depends}}
-	fi
-done < ./DEBIAN/control
-echo -e "\n \e[00;33m** Do not install the software if you have missing dependencies ** \e[00m \n "
-read -p "Do you want to continue with the installation? (y/n) " prompt
-if [[ $prompt =~ [yY](es)* ]];then
-	true
-else
-	exit 0
-fi
-#
-#
-chmod -R 0755 $DIR
-chown root:root -R $DIR
 
-echo -e "\n Removing previous versions...\n"
-./removal
+echo -e "\n\e[00;33m **************************************** \e[00m"
+echo -e "\e[00;33m *** Installing Andromeda v$ANDROMEDA_VERSION *** \e[00m"
+echo -e "\e[00;33m **************************************** \e[00m\n"
 
-echo -e "\nInstalling...\n"
-
-cp -ar $DIR/usr/. /usr/
-./DEBIAN/postinst
 
 #
+# Remove previous versions
 #
-echo -e "\n \e[00;32m The installation is complete. I hope you enjoy the software! -RSM \e[00m"
+
+DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+cd $DIR
+chmod a+x ./remove
+echo -e "\e[00;33m[1/$NUMBER_OF_STEPS] Removing previous versions..\e[00m"
+./remove -s
+
+#
+# Start the installation
+#
+
+echo -e "\e[00;33m\n[2/$NUMBER_OF_STEPS] Installing the software files...\e[00m"
+
+
+function install_files(){
+    
+    echo "installing: $1"
+    
+    install -d $1
+    install -D $DIR$1/* $1
+    
+}
+
+
+echo -e "\e[00;32m Copying the software files...\e[00m"
+
+install_files "/usr/bin"
+
+install_files "/usr/share/applications"
+
+install_files "/usr/share/andromeda"
+install_files "/usr/share/andromeda/images"
+
+install_files "/usr/share/doc/andromeda"
+install_files "/usr/share/doc/andromeda/code"
+
+install_files "/etc/andromeda"
+install_files "/etc/andromeda/pluggins"
+
+
+#
+#
+echo -e "\e[00;32m Replacing variables...\e[00m"
+
+sed -i "s/__ANDROMEDA_VERSION__/$ANDROMEDA_VERSION/g" "/usr/share/andromeda/gui.glade"
+
+
+##
+## End
+##
+echo -e "\n\e[00;33m ****************************************** \e[00m"
+echo -e "\e[00;33m *** Andromeda v$ANDROMEDA_VERSION is installed *** \e[00m"
+echo -e "\e[00;33m ****************************************** \e[00m\n"
