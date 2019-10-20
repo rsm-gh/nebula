@@ -4862,4 +4862,51 @@ audio-volume-medium-symbolic</property>
       </object>
     </child>
   </object>
+  <object class="GtkWindow" id="window_startup">
+    <property name="name">window_startup</property>
+    <property name="can_focus">False</property>
+    <property name="resizable">False</property>
+    <property name="window_position">center</property>
+    <property name="icon">images/logo_x32.png</property>
+    <property name="decorated">False</property>
+    <property name="deletable">False</property>
+    <child>
+      <placeholder/>
+    </child>
+    <child>
+      <object class="GtkBox">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="orientation">vertical</property>
+        <child>
+          <object class="GtkImage">
+            <property name="visible">True</property>
+            <property name="sensitive">False</property>
+            <property name="can_focus">False</property>
+            <property name="halign">start</property>
+            <property name="valign">start</property>
+            <property name="pixbuf">images/startup.jpg</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">False</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkProgressBar" id="startup_progressbar">
+            <property name="name">startup_progressbar</property>
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="show_text">True</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">2</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+  </object>
 </interface>

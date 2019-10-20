@@ -290,7 +290,6 @@ class GUI(Gtk.Window):
         
     def __init__(self):
         
-        self.ccp=CCParser(ini_path=PATHS.config, section='Andromeda Music Player')
         
         """
             Init glade stuff
@@ -299,6 +298,25 @@ class GUI(Gtk.Window):
         self.builder=Gtk.Builder()
         self.builder.add_from_file(PATHS.glade)
         self.builder.connect_signals(self)
+        
+        self.window_startup = self.builder.get_object('window_startup')
+        self.startup_progressbar = self.builder.get_object('startup_progressbar')
+        
+
+        self.window_startup.show_all()
+        #watch = Gdk.Cursor(Gdk.CursorType.WATCH)
+        #self.window_startup.set_cursor(watch)
+                
+        
+        Thread(target=self.__thread_init).start()
+        
+        
+    def __thread_init(self):
+        self.ccp=CCParser(ini_path=PATHS.config, section='Andromeda Music Player')
+        
+        Gdk.threads_enter()
+        self.startup_progressbar.set_text("Loading the interface...")
+        Gdk.threads_leave()
         
         OBJECTS=(
             'window_root',
@@ -333,10 +351,16 @@ class GUI(Gtk.Window):
                     'entry_TE_grouping','combobox_entry_TE_license',
                 
             'dialog_about',
+            
         )
         
-        for object in OBJECTS:
-            setattr(self, object, self.builder.get_object(object))
+        for obj in OBJECTS:
+            setattr(self, obj, self.builder.get_object(obj))
+
+
+        Gdk.threads_enter()
+        self.startup_progressbar.set_fraction(0.05)
+        Gdk.threads_leave()
 
 
         #
@@ -345,10 +369,10 @@ class GUI(Gtk.Window):
         # http://stackoverflow.com/a/34582432/3672754
         #
         treeview_labels=[]
-        for id in range(3,27):
+        for id_val in range(3,27):
             for name in ('','_q','_h'):
                 
-                treeview_column_str='treeviewcolumn{}{}'.format(name, id)                
+                treeview_column_str='treeviewcolumn{}{}'.format(name, id_val)                
                 setattr(self, treeview_column_str, self.builder.get_object(treeview_column_str))
                 treeview_column = getattr(self, treeview_column_str)
                 treeview_column_title = treeview_column.get_title()
@@ -363,7 +387,13 @@ class GUI(Gtk.Window):
                 widget.connect('button-press-event', self.on_treeview_RT_tracks_header_button_press_event)
    
                 if name == '':
-                    treeview_labels.append((treeview_column_title, id))
+                    treeview_labels.append((treeview_column_title, id_val))
+
+
+        Gdk.threads_enter()
+        self.startup_progressbar.set_fraction(0.10)
+        Gdk.threads_leave()
+
         
         #
         # Create the tracks right-click menu, set its default states and connect the signals
@@ -405,6 +435,11 @@ class GUI(Gtk.Window):
         self.menu_tracks_header.show_all()
         
         
+        Gdk.threads_enter()
+        self.startup_progressbar.set_fraction(0.15)
+        Gdk.threads_leave()
+
+        
         #
         # Connect the checkbuttons of the TE.
         #
@@ -414,6 +449,12 @@ class GUI(Gtk.Window):
             setattr(self, togglebutton_name, togglebutton)
             entry=getattr(self, entry_name)
             togglebutton.connect('toggled', self.on_togglebutton_TE_clicked, entry)
+
+
+        Gdk.threads_enter()
+        self.startup_progressbar.set_fraction(0.20)
+        Gdk.threads_leave()
+
 
         #
         # Connect the `all` buttons of the TE
@@ -428,12 +469,19 @@ class GUI(Gtk.Window):
             ('button_TE_all_genre', 16),
         )
         for button_id, column in all_buttons:
-            object=self.builder.get_object(button_id)
-            object.connect('clicked', self.on_button_TE_ALL_X_clicked, column)
+            obj=self.builder.get_object(button_id)
+            obj.connect('clicked', self.on_button_TE_ALL_X_clicked, column)
+
+
+        Gdk.threads_enter()
+        self.startup_progressbar.set_fraction(0.25)
+        Gdk.threads_leave()
+
 
         #
         # Initialize & Connect all the boolean buttons that should be simply saved in the configuration
         #
+        
         toggle_buttons=(
             ('checkbutton_start_playing_on_startup', False),
             ('checkbutton_on_close_system_try', True),
@@ -441,13 +489,21 @@ class GUI(Gtk.Window):
             ('checkbutton_warning_when_deleteing_track_from_hardrive', True),
             ('checkbutton_display_notifications', True),
         )
+        
         for button_name, default_state in toggle_buttons:
-            object=self.builder.get_object(button_name)
-            setattr(self, button_name, object)
-            configuration_name=label_to_configuration_name(object.get_label())
-            object.set_active(self.ccp.get_bool_defval(configuration_name, default_state))
+            obj=self.builder.get_object(button_name)
+            setattr(self, button_name, obj)
+            configuration_name=label_to_configuration_name(obj.get_label())
+            obj.set_active(self.ccp.get_bool_defval(configuration_name, default_state))
             
-            object.connect('toggled',self.on_toggle_button_toggled)
+            obj.connect('toggled',self.on_toggle_button_toggled)
+            
+            
+            
+        Gdk.threads_enter()
+        self.startup_progressbar.set_fraction(0.30)
+        Gdk.threads_leave()
+            
         
         """
             Some extra GUI/Glade initialization
@@ -475,6 +531,13 @@ class GUI(Gtk.Window):
         toolbutton_suffle=self.builder.get_object('toolbutton_suffle')
         menu_shuffle=self.builder.get_object('menu_shuffle')
         toolbutton_suffle.set_menu(menu_shuffle)
+
+
+        Gdk.threads_enter()
+        self.startup_progressbar.set_fraction(0.35)
+        Gdk.threads_leave()
+        
+
 
         """
             Initialize the custom cellrenderers
@@ -529,6 +592,11 @@ class GUI(Gtk.Window):
         self.iconview_RT_albums.pack_start(cellrenderer, True)
         self.iconview_RT_albums.add_attribute(cellrenderer, 'text', 2)
         
+        
+        Gdk.threads_enter()
+        self.startup_progressbar.set_fraction(0.40)
+        Gdk.threads_leave()
+        
 
         """
             Initialize general atributes
@@ -565,27 +633,21 @@ class GUI(Gtk.Window):
         self._treeview_playlists_double_clicked=False
         self._treeview_tracks_queue_double_clicked=False
 
+
+        Gdk.threads_enter()
+        self.startup_progressbar.set_fraction(0.45)
+        Gdk.threads_leave()
+
+
         """
             Start the notifications
         """
         Notify.init('Andromeda Music Player')
 
-        """
-            Populate the GUI
-        """
-        if self.checkbutton_start_playing_on_startup.get_active():
-            self.APPEND_request_to_queue(True)
-        else:
-            self.APPEND_request_to_queue(False)
-            
-        Thread(target=self.POPULATE_playlists).start()
-        Thread(target=self.thread_spinner).start()        
-        Thread(target=self.thread_player_manager).start()
-        Thread(target=self.thread_populator_manager).start()
-        self.POPULATE_completions()
-    
-        # update the tracks count number: All Music X
-        self.liststore_general_playlists[0][2]=self.db_main_thread.get_tracks_count()
+
+        Gdk.threads_enter()
+        self.startup_progressbar.set_fraction(0.46)
+        Gdk.threads_leave()
 
 
         """
@@ -616,6 +678,10 @@ class GUI(Gtk.Window):
         self.indicator_menu_button.add(menuitem)
         self.indicator_menu_button.show_all()
         
+        
+        Gdk.threads_enter()
+        self.startup_progressbar.set_fraction(0.50)
+        Gdk.threads_leave()
 
 
         """
@@ -636,11 +702,75 @@ class GUI(Gtk.Window):
         self.serversocket.listen(5) # maximum of 5 connections 
         Thread(target=self.thread_socket_listener).start()
 
+        
+        Gdk.threads_enter()
+        self.startup_progressbar.set_fraction(0.55)
+        Gdk.threads_leave()
 
+
+
+        """
+            Populate the GUI
+        """
+        
+        Gdk.threads_enter()
+        self.startup_progressbar.set_text("Loading the music...")
+        Gdk.threads_leave()
+        
+        
+        
+        if self.checkbutton_start_playing_on_startup.get_active():
+            self.APPEND_request_to_queue(True)
+        else:
+            self.APPEND_request_to_queue(False)
+        
+        
+        # Init threads    
+        th_populate_completions=Thread(target=self.POPULATE_completions)
+        thr_populate_playlists=Thread(target=self.POPULATE_playlists)
+        
+        th_populate_completions.start()
+        thr_populate_playlists.start()
+        
+        th_populate_completions.join()
+        thr_populate_playlists.join()
+        
+        #background threads
+        Thread(target=self.thread_spinner).start()        
+        Thread(target=self.thread_player_manager).start()
+        Thread(target=self.thread_populator_manager).start()
+        
+        
+        # Wait untill all has been populated
+        spinner_state=False
+        while True:
+            if spinner_state == False and True in self.populating_state:
+                spinner_state=True
+                    
+            elif spinner_state == True and not True in self.populating_state:
+                    break
+                
+            sleep(0.5)
+
+        
+
+        # update the tracks count number: All Music X
+        self.liststore_general_playlists[0][2]=self.db_main_thread.get_tracks_count()    
+    
+        Gdk.threads_enter()
+        self.startup_progressbar.set_fraction(0.90)
+        Gdk.threads_leave()
+    
     
         """
             Load the plugins
         """
+        
+        Gdk.threads_enter()
+        self.startup_progressbar.set_text("Loading the pluggins...")
+        Gdk.threads_leave()
+        
+        
         for plugin_name in get_plugins_data().keys():
             
             if self.ccp.get_bool_defval(label_to_configuration_name(plugin_name), False):
@@ -649,12 +779,28 @@ class GUI(Gtk.Window):
                     plugin.load_imports()
                 
                     setattr(self, plugin_name, plugin.Main(self, True))
-                except Exception as e:
+                except Exception:
                     print(traceback.format_exc())
+                    
+                    
+        Gdk.threads_enter()
+        self.startup_progressbar.set_fraction(1)
+        Gdk.threads_leave()
+        
     
-    
+        """ 
+            Display the GUI
+        """
+        
         self.window_root.maximize()
+
+        Gdk.threads_enter()
         self.window_root.show()
+        Gdk.threads_leave()
+    
+        Gdk.threads_enter()
+        self.window_startup.hide()
+        Gdk.threads_leave()    
 
 
     def thread_socket_listener(self):
@@ -809,6 +955,7 @@ class GUI(Gtk.Window):
                 Gdk.threads_leave()
     
             sleep(.5)
+
 
     def thread_spinner(self):
         spinner_state=False

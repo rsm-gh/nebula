@@ -2,9 +2,13 @@ Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: andromeda
 Source: Interpreted Language
 
+
+File: /usr/share/andromeda/images/startup.jpg
+Copyright:  CC BY 2.0, Wikipedia: https://en.wikipedia.org/wiki/Andromeda_Galaxy#/media/File:Andromeda_Galaxy_(with_h-alpha).jpg
+
+
 Files: logo*png
 Copyright:      franksouza183: http://franksouza183.deviantart.com/#/art/FS-Icons-Ubuntu-288407674?hf=1
-            &   
                 Rafael Senties Martinelli (since the image was modified).
 License: GPL3
 
