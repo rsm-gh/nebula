@@ -45,9 +45,12 @@ import gi
 gi.require_version('Gtk', '3.0')
 gi.require_version('AppIndicator3', '0.1')
 gi.require_version('Notify', '0.7')
-from gi.repository import Notify
+from gi.repository import Gtk, GObject, Gdk, Notify
 from gi.repository import AppIndicator3 as appindicator
+from gi.repository.GdkPixbuf import Pixbuf
 
+
+import os
 import sys
 import socket
 import traceback
@@ -56,16 +59,24 @@ from html import escape
 from threading import Thread
 from time import sleep, time
 from fnmatch import fnmatch
+from datetime import timedelta
 from random import choice, shuffle
 
-from CCParser import CCParser
 
-# local imports
+from CCParser import CCParser
 from Database import Database
 from Paths import Paths; PATHS=Paths()
-from texts import *
 from Player import Player
-from CustomWidgets import *
+from texts import *
+
+
+from CellRenderers.CellRendererRating import CellRendererRating
+from CellRenderers.CellRendererTrackTime import CellRendererTrackTime, FORMAT_miliseconds
+from CellRenderers.CellRendererBytes import CellRendererBytes, FORMAT_bytes
+from CellRenderers.CellRendererTimeStamp import CellRendererTimeStamp
+from CellRenderers.CellRendererURI import CellRendererURI, FORMAT_uri
+from CellRenderers.CellRendererLongText import CellRendererLongText
+from CellRenderers.CellRendererAlbum import CellRendererAlbum
 
 
 os.chdir(os.path.dirname(os.path.realpath(__file__)))
@@ -244,7 +255,7 @@ def gtk_treeview_selection_is_okay(treeview, event):
     
     try:
         pointing_treepath=treeview.get_path_at_pos(event.x, event.y)[0]
-    except exception as e:
+    except:
         return True
     
     treeview_selection=treeview.get_selection()
@@ -1856,7 +1867,7 @@ class GUI(Gtk.Window):
             if event.button == 3: # right click
                 try:
                     self._playlists_pointing_treepath=treeview.get_path_at_pos(event.x, event.y)[0]
-                except exception as e:
+                except:
                     self._playlists_pointing_treepath=None
                     
                 self.menu_on_playlist.popup(None, None, None, None, event.button, event.time)
