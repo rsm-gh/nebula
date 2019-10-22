@@ -56,13 +56,14 @@ from threading import Thread
 from time import sleep, time
 from fnmatch import fnmatch
 from datetime import timedelta
-from random import choice, shuffle
+from random import choice
 
 
 from CCParser import CCParser
 from Database import Database
 from Paths import Paths; PATHS=Paths()
 from Player import Player
+from gtk_utils import *
 from texts import *
 
 
@@ -78,23 +79,6 @@ from CellRenderers.CellRendererAlbum import CellRendererAlbum
 os.chdir(os.path.dirname(os.path.realpath(__file__)))
 sys.path.insert(1, PATHS.plugins_dir)
 
-
-def gtk_dialog_info(parent, text1, text2=None, icon=None):
-
-    dialog = Gtk.MessageDialog(parent,
-                               Gtk.DialogFlags.MODAL,
-                               Gtk.MessageType.INFO,
-                               Gtk.ButtonsType.CLOSE,
-                               text1)
-
-    if icon is not None:
-        dialog.set_icon_from_file(icon)
-
-    if text2 is not None:
-        dialog.format_secondary_text(text2)
-
-    dialog.run()
-    dialog.destroy()
 
 def get_plugins_data():
     plugins_dict={}
@@ -176,124 +160,6 @@ TE_checkbuttons_items=(
     ('togglebutton_TE_9','combobox_entry_TE_license'),
     ('togglebutton_TE_10','entry_TE_comment'),
 )
-
-def gtk_get_selected_cells_from_selection(gtk_selection, column=0):
-    model, treepaths = gtk_selection.get_selected_rows()
-    return [model[treepath][column] for treepath in treepaths]
-
-
-def gtk_get_first_selected_cell_from_selection(gtk_selection, column=0):
-    
-    model, treepaths = gtk_selection.get_selected_rows()
-
-    if treepaths==[]:
-        return None
-    
-    return model[treepaths[0]][column]
-
-def gtk_get_iter_from_liststore_cell(gtk_liststore, cell_value, column=0):
-    
-    treeiter = gtk_liststore.get_iter_first()
-    while treeiter != None:
-        if gtk_liststore.get_value(treeiter, column) == cell_value:
-            return treeiter
-
-        treeiter=gtk_liststore.iter_next(treeiter)
-    
-    return None
-    
-def gtk_liststore_has_value(gtk_liststore, cell_value, column=0):
-    
-    for row in gtk_liststore:
-        if row[column]==cell_value:
-            return True
-    
-    return False
-
-
-def gtk_select_row_from_cell(gtk_treeview, column, cellvalue, safe_thread=False):
-
-    gtk_liststore=gtk_treeview.get_model()
-    gtk_selection=gtk_treeview.get_selection()
-
-    if cellvalue is None:
-        liststore_iter=gtk_liststore.get_iter_first()
-    else:
-        liststore_iter=gtk_get_iter_from_liststore_cell(gtk_liststore, cellvalue, column)
-    
-        if liststore_iter is None:
-            liststore_iter=gtk_liststore.get_iter_first()
-
-    if liststore_iter is not None: # when a liststore is empty
-        if not safe_thread:
-            Gdk.threads_enter()
-            gtk_selection.select_iter(liststore_iter)
-            Gdk.threads_leave()
-        else:
-            gtk_selection.select_iter(liststore_iter)
-
-
-def gtk_shuffle_treeview(gtk_treeview):
-    """ 
-        It is not possible to use `liststore.reorder()` because
-        the treeview is sorted.
-    """
-    
-    gtk_treeview.set_sensitive(False)
-    gtk_treeview.freeze_child_notify()
-    
-    gtk_liststore=gtk_treeview.get_model()
-    gtk_treeview.set_model(None)
-
-    gtk_liststore.set_default_sort_func(lambda *unused: 0)
-    gtk_liststore.set_sort_column_id(-1, Gtk.SortType.ASCENDING)
-   
-    rows=[tuple(row) for row in gtk_liststore]
-    shuffle(rows)
-    
-    gtk_liststore.clear()
-    for row in rows:
-        gtk_liststore.append(row)
-    
-    
-    gtk_treeview.set_model(gtk_liststore)
-    gtk_treeview.set_sensitive(True)
-    gtk_treeview.thaw_child_notify()
-
-
-def gtk_treeview_selection_is_okay(treeview, event):
-    """
-        When an user do a right click on a treeview, if click
-        was not inside the selection, the selection will change.
-    """
-    
-    try:
-        pointing_treepath=treeview.get_path_at_pos(event.x, event.y)[0]
-    except:
-        return True
-    
-    treeview_selection=treeview.get_selection()
-
-    # if the iter is not in the selected iters, remove the previous selection
-    _, treepaths = treeview_selection.get_selected_rows()
-    
-    if not pointing_treepath in treepaths:
-        treeview_selection.unselect_all()
-        treeview_selection.select_path(pointing_treepath)
-
-
-def gtk_get_selected_cells_from_iconview_selection(gtk_iconview, row=0):
-
-    cells_data=[]
-    liststore=gtk_iconview.get_model()
-    
-    for item in gtk_iconview.get_selected_items():
-        treeiter = liststore.get_iter(item)
-        if treeiter is not None:
-            cells_data.append(liststore.get_value(treeiter, row))
-            
-    return cells_data
-
 
 
 def label_to_configuration_name(label):
@@ -1247,8 +1113,6 @@ class GUI(Gtk.Window):
 
     def _POPULATE_tracks(self, request, force=False):
         
-        print(request)
-        
         self.populating_state[2]=True
         
         tracks=self.db_populate_tracks.get_tracks(*request[0:5])
@@ -1495,9 +1359,6 @@ class GUI(Gtk.Window):
         
         self.__request_queue.append(request)
         
-        
-        print(request)
-    
     
     def PLAY_track(self, track_id, safe_thread=False):
 
@@ -2110,6 +1971,7 @@ class GUI(Gtk.Window):
         GLib.idle_add(self.menubar.set_sensitive, True)
         GLib.idle_add(self.paned_middle.set_sensitive, True)
         GLib.idle_add(self.main_progessbar.set_text, "")
+        GLib.idle_add(self.__update_progress_bar, 0)
         
 
     def __set_watch_cursor(self):
