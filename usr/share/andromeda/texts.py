@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 #
 
-#  Copyright (C) 2016  Rafael Senties Martinelli 
+#  Copyright (C) 2016, 2019  Rafael Senties Martinelli 
 #
 #  This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License 3 as published by
@@ -19,3 +19,6 @@
 
 
 TEXT_PROGAM_NAME='Andromeda Music Player'
+TEXT_CANT_DELETE_ALL_ALBUMS="The 'All Albums' selection can not be deleted. Only the other albums will be deleted."
+TEXT_CANT_DELETE_ALL_ARTISTS="The 'All Artists' selection can not be deleted. Only the other artists will be deleted."
+TEXT_CANT_DELETE_ALL_GENRES="The 'All Genres' selection can not be deleted. Only the other genres will be deleted."

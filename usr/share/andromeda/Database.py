@@ -312,6 +312,14 @@ ORDER BY T.Uri'''.format(self._standard_track_query))
         self._cursor.execute('''DELETE FROM CorePlaylists WHERE PlaylistID = ?''', (playlist_id,))
         self._connection.commit()
 
+    def delete_artist(self, artist_id):
+        self._cursor.execute('''DELETE FROM CoreArtists WHERE ArtistID = ?''', (artist_id,))
+        self._connection.commit()
+
+    def delete_album(self, album_id):
+        self._cursor.execute('''DELETE FROM CoreAlbums WHERE AlbumID = ?''', (album_id,))
+        self._connection.commit()
+
     def delete_track(self, track_id):
         self._cursor.execute('''DELETE FROM CoreTracks WHERE TrackID = ?''', (track_id,))
         self._connection.commit()
