@@ -116,13 +116,13 @@ class Window(Gtk.Window):
         iconview.add_attribute(cellrenderer, 'text', 0)
         
 
-        albums_ids=(
+        albums_id=(
             'album-6d78a94f8a4b69df3c19f156656ef6c8',
             'album-5459e192058c81039572a0f4fb0b8024',
             'album-41137facf94fcf8b066ef0bf094f5ab0',
         )
 
-        for icon_name in albums_ids:
+        for icon_name in albums_id:
             liststore.append([icon_name])
 
         box.add(iconview)

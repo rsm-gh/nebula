@@ -151,7 +151,7 @@ ORDER BY Name   '''.format(''' AND '''.join(item for item in WHERE)), ARGS)
         return self._cursor.fetchall()
 
 
-    def get_albums(self, filter=None, playlist_id=None, genres=None, artists_ids=None):
+    def get_albums(self, filter=None, playlist_id=None, genres=None, artists_id=None):
 
         WHERE=[]
         ARGS=[]
@@ -164,9 +164,9 @@ ORDER BY Name   '''.format(''' AND '''.join(item for item in WHERE)), ARGS)
             WHERE.append('''T.Genre IN ({})'''.format(','.join('?'*len(genres))))
             ARGS+=genres
         
-        if artists_ids is not None:
-            WHERE.append('''Ar.ArtistID IN ({})'''.format(','.join('?'*len(artists_ids))))
-            ARGS+=artists_ids
+        if artists_id is not None:
+            WHERE.append('''Ar.ArtistID IN ({})'''.format(','.join('?'*len(artists_id))))
+            ARGS+=artists_id
                     
         if filter is not None:
             WHERE.append('''(T.TitleLowered like ? OR Ar.NameLowered like ? OR Ab.TitleLowered like ?)''')
@@ -195,7 +195,7 @@ ORDER BY Ar.Name, Ab.Title'''.format(''' AND '''.join(item for item in WHERE)), 
         return self._cursor.fetchall()
 
 
-    def get_tracks(self, filter=None, playlist_id=None, genres=None, artists_ids=None, albums_ids=None):
+    def get_tracks(self, filter=None, playlist_id=None, genres=None, artists_id=None, albums_id=None):
  
         WHERE=[]
         ARGS=[]
@@ -208,13 +208,13 @@ ORDER BY Ar.Name, Ab.Title'''.format(''' AND '''.join(item for item in WHERE)), 
             WHERE.append('''T.Genre IN ({})'''.format(','.join('?'*len(genres))))
             ARGS+=genres
         
-        if artists_ids is not None:
-            WHERE.append('''Ar.ArtistID IN ({})'''.format(','.join('?'*len(artists_ids))))
-            ARGS+=artists_ids
+        if artists_id is not None:
+            WHERE.append('''Ar.ArtistID IN ({})'''.format(','.join('?'*len(artists_id))))
+            ARGS+=artists_id
         
-        if albums_ids is not None:
-            WHERE.append('''Ab.AlbumID IN ({})'''.format(','.join('?'*len(albums_ids))))
-            ARGS+=albums_ids
+        if albums_id is not None:
+            WHERE.append('''Ab.AlbumID IN ({})'''.format(','.join('?'*len(albums_id))))
+            ARGS+=albums_id
             
         if filter is not None:
             WHERE.append('''(T.TitleLowered like ? OR Ar.NameLowered like ? OR Ab.TitleLowered like ?)''')

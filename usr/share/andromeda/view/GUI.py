@@ -1,7 +1,6 @@
 #!/usr/bin/python3
 #
 
-
 #  Copyright (C) 2016, 2019  Rafael Senties Martinelli 
 #
 #  This program is free software; you can redistribute it and/or modify
@@ -16,6 +15,7 @@
 # You should have received a copy of the GNU General Public License
 #   along with this program; if not, write to the Free Software Foundation,
 #   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA.
+
 
     #TODO: Activate the spin when modifiying data
     #TODO: Finish "edit tracks" for albums, and add to queue for all
@@ -64,6 +64,7 @@ from controller.Database import Database
 from controller.Player import Player
 from view.gtk_utils import *
 from view.texts import *
+from model.DataRequest import DataRequest
 
 
 from view.CellRenderers.CellRendererRating import CellRendererRating
@@ -166,6 +167,10 @@ def label_to_configuration_name(label):
 
 
 class GUI(Gtk.Window):
+    
+    __ALL_ARTISTS_ID = -1
+    __ALL_ALBUMS_ID = -1
+    
         
     def __init__(self):
         
@@ -868,7 +873,16 @@ class GUI(Gtk.Window):
             
             In this case I think a persistent loop is good to avoid spawning too many threads.
         """
-        current_request=(None, None, None, None, None, False, True)
+        
+        current_request=DataRequest(play_track=False,
+                                     force_update=True,
+                                     request_filter=None, 
+                                     playlist_id=None,
+                                     genres=None, 
+                                     artists_id=None, 
+                                     albums_id=None)
+        
+        
         self.__request_queue.append(current_request)
         
         while self.keep_threads_alive:
@@ -876,13 +890,14 @@ class GUI(Gtk.Window):
             if len(self.__request_queue) > 0:
                 
                 last_request = self.__request_queue[-1:][0]
-                force=last_request[6]
                 
                 self.__request_queue = []
                 
-                if  last_request != current_request or force:
+                if  last_request != current_request or last_request._force_update:
                     
                     current_request = last_request
+                    print(current_request)
+                    
                                     
                     # If some thread is already populating the queue,
                     # stop it, and wait until it dies.
@@ -897,22 +912,23 @@ class GUI(Gtk.Window):
                         
                     
                     # Populate the GUI
-                    Thread(target=self._POPULATE_artists_and_genres, args=[current_request, force]).start()
-                    Thread(target=self._POPULATE_albums,             args=[current_request, force]).start()
-                    Thread(target=self._POPULATE_tracks,             args=[current_request, force]).start()
+                    Thread(target=self._POPULATE_artists_and_genres, args=[current_request]).start()
+                    Thread(target=self._POPULATE_albums,             args=[current_request]).start()
+                    Thread(target=self._POPULATE_tracks,             args=[current_request]).start()
             
             sleep(.3)
             
 
-    def _POPULATE_artists_and_genres(self, request, force=False):
+    def _POPULATE_artists_and_genres(self, data_request):
 
         self.populating_state[0]=True
         
-        # Populate genres
+        # Populate the genres
         #
-        genres=self.db_populate_artists_genres.get_genres(*request[0:2])
+        genres=self.db_populate_artists_genres.get_genres(filter=data_request._filter,
+                                                          playlist_id=data_request._playlist_id)
                 
-        if self.cache_genres != genres or force:
+        if self.cache_genres != genres or data_request._force_update:
             
             self.cache_genres=genres
             selected_genre=gtk_get_first_selected_cell_from_selection(self.treeview_selection_genres, 0)
@@ -943,11 +959,13 @@ class GUI(Gtk.Window):
             
             
             
-        # Populate artists
+        # Populate the artists
         # 
-        artists=self.db_populate_artists_genres.get_artists(*request[0:3])
+        artists=self.db_populate_artists_genres.get_artists(filter=data_request._filter,
+                                                            playlist_id=data_request._playlist_id,
+                                                            genres=data_request._genres)
 
-        if artists != self.cache_artists or force:
+        if artists != self.cache_artists or data_request._force_update:
             self.cache_artists=artists
             selected_artist_id=gtk_get_first_selected_cell_from_selection(self.treeview_selection_artists, 0)
             
@@ -962,7 +980,7 @@ class GUI(Gtk.Window):
 
             ## Start populating
             #
-            self.liststore_artists.append([-1, "All Artists ({})".format(len(artists))])
+            self.liststore_artists.append([self.__ALL_ARTISTS_ID, "All Artists ({})".format(len(artists))])
             
             for artist_id, artist in artists:
                 if self.populating_abort:
@@ -1060,13 +1078,17 @@ class GUI(Gtk.Window):
             self.liststore_completion_albums.append([album_id, album_name])
         
 
-    def _POPULATE_albums(self, request, force=False):
+    def _POPULATE_albums(self, data_request, force=False):
          
         self.populating_state[1]=True
         
-        albums=self.db_populate_albums.get_albums(*request[0:4])
+        albums=self.db_populate_albums.get_albums(filter=data_request._filter,
+                                                  playlist_id=data_request._playlist_id,
+                                                  genres=data_request._genres,
+                                                  artists_id=data_request._artists_id)
+        
 
-        if albums != self.cache_albums or force:
+        if albums != self.cache_albums or data_request._force_update:
             self.cache_albums=albums
 
                         
@@ -1110,14 +1132,21 @@ class GUI(Gtk.Window):
         self.populating_state[1]=False
 
 
-    def _POPULATE_tracks(self, request, force=False):
+    def _POPULATE_tracks(self, data_request):
         
         self.populating_state[2]=True
         
-        tracks=self.db_populate_tracks.get_tracks(*request[0:5])
-        play_track_at_end=request[5]
+        tracks=self.db_populate_tracks.get_tracks(filter=data_request._filter,
+                                                  playlist_id=data_request._playlist_id,
+                                                  genres=data_request._genres,
+                                                  artists_id=data_request._artists_id,
+                                                  albums_id=data_request._albums_id)
+        
+        
+        play_track_at_end = data_request._play_track 
+        
 
-        if tracks != self.cache_tracks or force:
+        if tracks != self.cache_tracks or data_request._force_update:
             
             self.cache_tracks=tracks
             
@@ -1276,7 +1305,7 @@ class GUI(Gtk.Window):
                                 ignore_artist=False,
                                 ignore_albums=False,
                                 ignore_search=False,
-                                force=False):
+                                force_update=False):
         
         """
             Read the Genre, Artist, Album, and filter selection from the GUI,
@@ -1348,15 +1377,16 @@ class GUI(Gtk.Window):
         # Append the query
         #
         
-        request=(request_filter, 
-                 playlist_id, 
-                 selected_genres, 
-                 selected_artist_ids, 
-                 selected_album_ids, 
-                 play_track,
-                 force)
+        data_request = DataRequest(play_track,
+                                   force_update,
+                                   request_filter, 
+                                   playlist_id, 
+                                   selected_genres, 
+                                   selected_artist_ids, 
+                                   selected_album_ids)
+                 
         
-        self.__request_queue.append(request)
+        self.__request_queue.append(data_request)
         
     
     def PLAY_track(self, track_id, safe_thread=False):
@@ -1842,7 +1872,7 @@ class GUI(Gtk.Window):
         GLib.idle_add(self.main_progessbar.set_text, "Deleting tracks...")
 
         selected_genres=[]
-        selected_artists_ids=[]
+        selected_artists_id=[]
         selected_album_ids=[]
         selected_track_ids=[]
         
@@ -1874,19 +1904,19 @@ class GUI(Gtk.Window):
             ignore_album = True
 
         elif self._current_edit_treeview == 'artists':
-            selected_artists_ids=gtk_get_selected_cells_from_selection(self.treeview_selection_artists)
+            selected_artists_id=gtk_get_selected_cells_from_selection(self.treeview_selection_artists)
             
-            if -1 in selected_artists_ids:
-                selected_artists_ids.remove(-1) # -1 = All Artists ID
+            if -1 in selected_artists_id:
+                selected_artists_id.remove(-1) # -1 = All Artists ID
 
                 Gdk.threads_enter()
                 gtk_dialog_info(self, TEXT_CANT_DELETE_ALL_ARTISTS)
                 Gdk.threads_leave()
 
             
-            if len(selected_artists_ids) > 0:
-                albums_data=self.db_main_thread.get_albums(artists_ids=selected_artists_ids)
-                tracks_data=self.db_main_thread.get_tracks(artists_ids=selected_artists_ids)
+            if len(selected_artists_id) > 0:
+                albums_data=self.db_main_thread.get_albums(artists_id=selected_artists_id)
+                tracks_data=self.db_main_thread.get_tracks(artists_id=selected_artists_id)
                 
             ignore_artist = True
             ignore_album = True
@@ -1903,7 +1933,7 @@ class GUI(Gtk.Window):
                 
             
             if len(selected_album_ids) > 0:
-                tracks_data=self.db_main_thread.get_tracks(albums_ids=selected_album_ids)
+                tracks_data=self.db_main_thread.get_tracks(albums_id=selected_album_ids)
                 
                 
             ignore_album = True
@@ -1923,7 +1953,7 @@ class GUI(Gtk.Window):
         
         #TODO: implement on cascade delete? what about the progressbar?
         
-        if len(selected_artists_ids) == 0:
+        if len(selected_artists_id) == 0:
             selected_album_ids = [data[0] for data in artists_data]
 
         if len(selected_album_ids) == 0:
@@ -1934,7 +1964,7 @@ class GUI(Gtk.Window):
         
         total_nb_of_items = len(selected_track_ids) + \
                             len(selected_album_ids) + \
-                            len(selected_artists_ids)
+                            len(selected_artists_id)
 
         progress_counter = 0
 
@@ -1950,7 +1980,7 @@ class GUI(Gtk.Window):
             progress_counter += 1
             GLib.idle_add(self.__update_progress_bar, progress_counter/total_nb_of_items)
 
-        for artist_id in selected_artists_ids:
+        for artist_id in selected_artists_id:
             self.db_track_delete.delete_artist(artist_id)
             
             progress_counter += 1
@@ -2005,12 +2035,12 @@ class GUI(Gtk.Window):
             self._tracks_to_edit=self.db_main_thread.get_tracks(genres=selected_genres)
 
         elif self._current_edit_treeview == 'artists':
-            selected_artists_ids=gtk_get_selected_cells_from_selection(self.treeview_selection_artists)
+            selected_artists_id=gtk_get_selected_cells_from_selection(self.treeview_selection_artists)
             
-            if selected_artists_ids == [] or -1 in selected_artists_ids:
-                selected_artists_ids=None
+            if selected_artists_id == [] or -1 in selected_artists_id:
+                selected_artists_id=None
             
-            self._tracks_to_edit=self.db_main_thread.get_tracks(artists_ids=selected_artists_ids)
+            self._tracks_to_edit=self.db_main_thread.get_tracks(artists_id=selected_artists_id)
         
         elif self._current_edit_treeview == 'albums':
             selected_album_ids=gtk_get_selected_cells_from_iconview_selection(self.iconview_RT_albums, 3)
@@ -2019,7 +2049,7 @@ class GUI(Gtk.Window):
                 selected_album_ids=None
             
             
-            self._tracks_to_edit=self.db_main_thread.get_tracks(albums_ids=selected_album_ids)
+            self._tracks_to_edit=self.db_main_thread.get_tracks(albums_id=selected_album_ids)
 
         elif self._current_edit_treeview in ('tracks', 'queue', 'historial'):
             self._tracks_to_edit=self.db_main_thread.get_tracks_from_ids(
