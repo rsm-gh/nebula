@@ -341,7 +341,6 @@
     <child>
       <object class="GtkMenuItem" id="menuitem_delete">
         <property name="visible">True</property>
-        <property name="sensitive">True</property>
         <property name="can_focus">False</property>
         <property name="label" translatable="yes">Delete</property>
         <property name="use_underline">True</property>
@@ -885,6 +884,7 @@
                         <property name="label">gtk-properties</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
+                        <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
                         <signal name="activate" handler="on_button_RT_settings_clicked" swapped="no"/>
                       </object>
@@ -3006,7 +3006,7 @@ audio-volume-medium-symbolic</property>
     <property name="copyright" translatable="yes">(C) 2016, 2019 Rafael Senties Martinelli</property>
     <property name="website">https://github.com/rsm-gh/andromeda</property>
     <property name="logo">images/logo_x128.png</property>
-    <property name="license_type">lgpl-3-0</property>
+    <property name="license_type">gpl-3-0</property>
     <child>
       <placeholder/>
     </child>
