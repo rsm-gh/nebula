@@ -17,12 +17,14 @@
 #   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA.
 
 from controller import vlc
-VLCStatePlaying=vlc.State.Playing
-VLCStatePaused=vlc.State.Paused
-VLCStateStopped=vlc.State.Stopped
-VLCStateEnded=vlc.State.Ended
 
-class Player:
+_VLC_STATE_PLAYING=vlc.State.Playing
+_VLC_STATE_PAUSED=vlc.State.Paused
+_VLC_STATE_STOPPED=vlc.State.Stopped
+_VLC_STATE_ENDED=vlc.State.Ended
+
+
+class Player(object):
     
     def __init__(self):
         self._instance = vlc.Instance(['--no-xlib'])
@@ -47,7 +49,6 @@ class Player:
         if number >=0 and number <= 100:
             self._media_player.audio_set_volume(int(number))
             
-            
     def set_position(self, number):
         if number >=0 and number <= 1:
             self._media_player.set_position(number)
@@ -62,29 +63,28 @@ class Player:
         return self._media_player.get_length()
 
     def is_playing(self):
-        if self._media_player.get_state() == VLCStatePlaying:
+        if self._media_player.get_state() == _VLC_STATE_PLAYING:
             return True
             
         return False
         
     def is_paused(self):
-        if self._media_player.get_state() == VLCStatePaused:
+        if self._media_player.get_state() == _VLC_STATE_PAUSED:
             return True
             
         return False
         
     def is_stopped(self):
-        if self._media_player.get_state() == VLCStateStopped:
+        if self._media_player.get_state() == _VLC_STATE_STOPPED:
             return True
         
         return False
         
     def ended_playing(self):
-        if self._media_player.get_state() == VLCStateEnded:
+        if self._media_player.get_state() == _VLC_STATE_ENDED:
             return True
             
         return False
-
 
     def _get_state(self):
         return self._media_player.get_state()
