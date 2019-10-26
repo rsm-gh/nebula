@@ -40,10 +40,10 @@ class Paths:
 
 
         # local
-        self.glade='{}/gui.glade'.format(current_dir)
-        self.albums_artwork_default='{}/images/album_x90.jpg'.format(current_dir)
-        self.albums_current_default='{}/images/album_x36.jpg'.format(current_dir)
-        self.playlist='{}/images/playlist.png'.format(current_dir)
+        self.glade='{}/view/gui.glade'.format(current_dir)
+        self.albums_artwork_default='{}/view/images/album_x90.jpg'.format(current_dir)
+        self.albums_current_default='{}/view/images/album_x36.jpg'.format(current_dir)
+        self.playlist='{}/view/images/playlist.png'.format(current_dir)
 
 
 if __name__ == '__main__':

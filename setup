@@ -62,8 +62,11 @@ install_files "/usr/bin"
 install_files "/usr/share/applications"
 
 install_files "/usr/share/andromeda"
-install_files "/usr/share/andromeda/CellRenderers"
-install_files "/usr/share/andromeda/images"
+install_files "/usr/share/andromeda/view"
+install_files "/usr/share/andromeda/view/CellRenderers"
+install_files "/usr/share/andromeda/view/images"
+install_files "/usr/share/andromeda/model"
+install_files "/usr/share/andromeda/controller"
 
 install_files "/usr/share/doc/andromeda"
 install_files "/usr/share/doc/andromeda/code"
@@ -77,7 +80,7 @@ install_files "/etc/andromeda/pluggins"
 #
 echo -e "\e[00;32m Replacing variables...\e[00m"
 
-sed -i "s/__ANDROMEDA_VERSION__/$ANDROMEDA_VERSION/g" "/usr/share/andromeda/gui.glade"
+sed -i "s/__ANDROMEDA_VERSION__/$ANDROMEDA_VERSION/g" "/usr/share/andromeda/view/gui.glade"
 
 
 ##

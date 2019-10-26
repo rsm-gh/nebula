@@ -58,22 +58,21 @@ from fnmatch import fnmatch
 from datetime import timedelta
 from random import choice
 
-
-from CCParser import CCParser
-from Database import Database
 from Paths import Paths; PATHS=Paths()
-from Player import Player
-from gtk_utils import *
-from texts import *
+from controller.CCParser import CCParser
+from controller.Database import Database
+from controller.Player import Player
+from view.gtk_utils import *
+from view.texts import *
 
 
-from CellRenderers.CellRendererRating import CellRendererRating
-from CellRenderers.CellRendererTrackTime import CellRendererTrackTime, FORMAT_miliseconds
-from CellRenderers.CellRendererBytes import CellRendererBytes, FORMAT_bytes
-from CellRenderers.CellRendererTimeStamp import CellRendererTimeStamp
-from CellRenderers.CellRendererURI import CellRendererURI, FORMAT_uri
-from CellRenderers.CellRendererLongText import CellRendererLongText
-from CellRenderers.CellRendererAlbum import CellRendererAlbum
+from view.CellRenderers.CellRendererRating import CellRendererRating
+from view.CellRenderers.CellRendererTrackTime import CellRendererTrackTime, FORMAT_miliseconds
+from view.CellRenderers.CellRendererBytes import CellRendererBytes, FORMAT_bytes
+from view.CellRenderers.CellRendererTimeStamp import CellRendererTimeStamp
+from view.CellRenderers.CellRendererURI import CellRendererURI, FORMAT_uri
+from view.CellRenderers.CellRendererLongText import CellRendererLongText
+from view.CellRenderers.CellRendererAlbum import CellRendererAlbum
 
 
 os.chdir(os.path.dirname(os.path.realpath(__file__)))
@@ -2489,10 +2488,13 @@ class GUI(Gtk.Window):
         Gtk.main_quit()
         
 
-
-if __name__ == '__main__':
+def start():
     
     GObject.threads_init()
     Gdk.threads_init()
-    main=GUI()
+    GUI()
     Gtk.main()
+
+if __name__ == '__main__':
+    start()
+

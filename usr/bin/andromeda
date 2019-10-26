@@ -24,11 +24,9 @@ if len(sys.argv) == 1:
     """
         Start the GUI
     """
-    from GUI import *
-    GObject.threads_init()
-    Gdk.threads_init()
-    main=GUI()
-    Gtk.main()
+    from view import GUI
+    
+    GUI.start()
 
 elif len(sys.argv) >= 2:
     """
