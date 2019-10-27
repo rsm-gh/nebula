@@ -17,17 +17,39 @@
 #   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA.
 
 
+from typing import Union, List
+
+
 class DataRequest(object):
+    """
+        This class is used for storing the data associated to the user data (tracks) requests.
+        
+        When the user uses the GUI and selects some; playlist, genre, album, artists or a 
+        manual filter, he creates a data request that will be searched in the database and
+        loaded in the GUI.
+    """
     
     
     def __init__(self,
-                play_track,
-                force_update,
-                request_filter, 
-                playlist_id,
-                genres, 
-                artists_id, 
-                albums_id):
+                play_track: bool,
+                force_update: bool,
+                request_filter: Union[str, None], 
+                playlist_id: Union[int, None],
+                genres: Union[List[str], None], 
+                artists_id: Union[List[int], None], 
+                albums_id: Union[List[int], None]):
+        
+        """
+            Args:
+                play_track (bool): If once the request loaded in the GUI, a track should be played.
+                force_update (bool): Requests containing the same information are not loaded.
+                                     If force_update=True, that condition is ignored.
+                request_filter (Union[str, None]): Filter created by the user.
+                playlist_id (Union[int, None]): Playlist ID.
+                genres (Union[List[str], None]): List of genres names.
+                artists_id (Union[List[int], None]): List of the artists ID.
+                albums_id (Union[List[int], None]): List of the albums ID.
+        """
     
     
         self._filter = request_filter
