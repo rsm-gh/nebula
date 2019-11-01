@@ -29,6 +29,13 @@ import urllib.parse
 
 class Database(object):
 
+    __ID_TRACK_QUERY='''
+SELECT T.TrackID
+FROM CoreTracks T
+    JOIN CoreArtists Ar ON T.ArtistID = Ar.ArtistID
+    JOIN CoreAlbums Ab  ON T.AlbumID = Ab.AlbumID
+'''
+
     __STANDARD_TRACK_QUERY='''
 SELECT
     T.TrackID, T.TrackNumber, T.Title,           Ab.Title,           Ab.ArtistName,  Ar.Name,     T.BitRate,  T.SampleRate, BitsPerSample, 
@@ -189,7 +196,19 @@ ORDER BY Ar.Name, Ab.Title'''.format(''' AND '''.join(item for item in WHERE)), 
         return self.__cursor.fetchall()
 
 
-    def get_tracks(self, user_filter=None, playlist_id=None, genres=None, artists_id=None, albums_id=None):
+    def get_tracks(self,
+                   user_filter=None,
+                   playlist_id=None,
+                   genres=None,
+                   artists_id=None,
+                   albums_id=None,
+                   only_id=False):
+        """
+            Get the whole tracks data (T.TrackID, T.TrackNumber, T.Title, Ab.Title, etc..) by using filters.
+            The data will be sorted by Ar.Name, Ab.Title and T.Title.
+        
+            If only_id=True, only the TracksID will be returned, and the sort will by track ID.
+        """
  
         WHERE=[]
         ARGS=[]
@@ -217,9 +236,22 @@ ORDER BY Ar.Name, Ab.Title'''.format(''' AND '''.join(item for item in WHERE)), 
       
       
         if WHERE == []:
-            self.__cursor.execute('''{} GROUP BY T.TrackID ORDER BY Ar.Name, Ab.Title, T.Title'''.format(self.__STANDARD_TRACK_QUERY))
+            
+            if only_id:
+                self.__cursor.execute('''{} GROUP BY T.TrackID ORDER BY T.TrackID'''.format(self.__ID_TRACK_QUERY))
+            else:
+                self.__cursor.execute('''{} GROUP BY T.TrackID ORDER BY Ar.Name, Ab.Title, T.Title'''.format(self.__STANDARD_TRACK_QUERY))
         else:
-            self.__cursor.execute('''
+            if only_id:
+                self.__cursor.execute('''
+{} 
+WHERE {}
+GROUP BY T.TrackID
+ORDER BY T.TrackID'''.format(self.__ID_TRACK_QUERY, ''' AND '''.join(item for item in WHERE)), ARGS)
+                
+                
+            else:
+                self.__cursor.execute('''
 {} 
 WHERE {}
 GROUP BY T.TrackID
