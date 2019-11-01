@@ -58,10 +58,11 @@ from fnmatch import fnmatch
 from datetime import timedelta
 from random import choice
 
-from Paths import Paths; PATHS=Paths()
+from Paths import Paths
 from controller.CCParser import CCParser
 from controller.Database import Database
 from controller.Player import Player
+from controller.plugin_factory import get_data as get_plugins_data
 from view.gtk_utils import *
 from view.texts import *
 from model.DataRequest import DataRequest
@@ -75,48 +76,10 @@ from view.CellRenderers.CellRendererURI import CellRendererURI, FORMAT_uri
 from view.CellRenderers.CellRendererLongText import CellRendererLongText
 from view.CellRenderers.CellRendererAlbum import CellRendererAlbum
 
+PATHS=Paths()
 
 os.chdir(os.path.dirname(os.path.realpath(__file__)))
 sys.path.insert(1, PATHS.plugins_dir)
-
-
-def get_plugins_data():
-    plugins_dict={}
-
-    for filename in os.listdir(PATHS.plugins_dir):
-                
-        data={}
-        
-        if not filename.startswith('_') and filename.endswith('.py'):
-            
-            try:
-            
-                module=__import__(filename[:-3])
-            
-                module_name=module.__name__
-            
-                data['name']=module_name
-                data['description']=module.__description__
-                data['version']=module.__version__
-                
-                try:
-                    data['date']=module.__date__
-                except:
-                    data['date']=''
-                
-                data['mantainer']=module.__mantainer__
-                
-                try:
-                    data['website']=module.__website__
-                except:
-                    data['website']=''
-            
-                if not module_name in plugins_dict.keys():
-                    plugins_dict[filename[:-3]]=data
-            except Exception:
-                print(traceback.format_exc())
-    
-    return plugins_dict
 
 
 # Properties of the track editor
@@ -655,7 +618,7 @@ class GUI(Gtk.Window):
         Gdk.threads_leave()
         
         
-        for plugin_name in get_plugins_data().keys():
+        for plugin_name in get_plugins_data(PATHS.plugins_dir).keys():
             
             if self.ccp.get_bool_defval(label_to_configuration_name(plugin_name), False):
                 try:
@@ -1005,7 +968,7 @@ class GUI(Gtk.Window):
             self.plugins_box.remove(child)
         
         
-        for plugin_key, plugin in get_plugins_data().items():
+        for plugin_key, plugin in get_plugins_data(PATHS.plugins_dir).items():
             
             main_box=Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
             main_box.set_margin_top(10)
