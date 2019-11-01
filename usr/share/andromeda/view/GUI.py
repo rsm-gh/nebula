@@ -489,14 +489,14 @@ class GUI(Gtk.Window):
 
         # It is pretty important that each thread 
         # run a different database connection
-        self.db_main_thread=Database()
-        self.db_playlists=Database()
-        self.db_tracks_queue=Database()
-        self.db_populate_albums=Database()
-        self.db_populate_artists_genres=Database()
-        self.db_populate_tracks=Database()
-        self.db_track_editor=Database()
-        self.db_track_delete=Database()
+        self.db_main_thread=Database(PATHS.database)
+        self.db_playlists=Database(PATHS.database)
+        self.db_tracks_queue=Database(PATHS.database)
+        self.db_populate_albums=Database(PATHS.database)
+        self.db_populate_artists_genres=Database(PATHS.database)
+        self.db_populate_tracks=Database(PATHS.database)
+        self.db_track_editor=Database(PATHS.database)
+        self.db_track_delete=Database(PATHS.database)
         
         
         self.populating_state=[False, False, False] # artsts&genres, album, tracks
@@ -925,7 +925,7 @@ class GUI(Gtk.Window):
         
         # Populate the genres
         #
-        genres=self.db_populate_artists_genres.get_genres(filter=data_request._filter,
+        genres=self.db_populate_artists_genres.get_genres(user_filter=data_request._filter,
                                                           playlist_id=data_request._playlist_id)
                 
         if self.cache_genres != genres or data_request._force_update:
@@ -961,7 +961,7 @@ class GUI(Gtk.Window):
             
         # Populate the artists
         # 
-        artists=self.db_populate_artists_genres.get_artists(filter=data_request._filter,
+        artists=self.db_populate_artists_genres.get_artists(user_filter=data_request._filter,
                                                             playlist_id=data_request._playlist_id,
                                                             genres=data_request._genres)
 
@@ -1082,7 +1082,7 @@ class GUI(Gtk.Window):
          
         self.populating_state[1]=True
         
-        albums=self.db_populate_albums.get_albums(filter=data_request._filter,
+        albums=self.db_populate_albums.get_albums(user_filter=data_request._filter,
                                                   playlist_id=data_request._playlist_id,
                                                   genres=data_request._genres,
                                                   artists_id=data_request._artists_id)
@@ -1136,7 +1136,7 @@ class GUI(Gtk.Window):
         
         self.populating_state[2]=True
         
-        tracks=self.db_populate_tracks.get_tracks(filter=data_request._filter,
+        tracks=self.db_populate_tracks.get_tracks(user_filter=data_request._filter,
                                                   playlist_id=data_request._playlist_id,
                                                   genres=data_request._genres,
                                                   artists_id=data_request._artists_id,

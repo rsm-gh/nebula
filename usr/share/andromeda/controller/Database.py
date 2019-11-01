@@ -27,11 +27,9 @@ import sqlite3
 import os
 import urllib.parse
 
-from Paths import Paths
+class Database(object):
 
-__PATHS=Paths()
-
-__STANDARD_TRACK_QUERY='''
+    __STANDARD_TRACK_QUERY='''
 SELECT
     T.TrackID, T.TrackNumber, T.Title,           Ab.Title,           Ab.ArtistName,  Ar.Name,     T.BitRate,  T.SampleRate, BitsPerSample, 
     T.Comment, T.Composer,    T.Conductor,       T.DateAddedStamp,   T.DiscCount,    T.Uri,       T.FileSize, T.Genre,      T.AlbumID,
@@ -41,11 +39,10 @@ FROM CoreTracks T
     JOIN CoreAlbums Ab  ON T.AlbumID = Ab.AlbumID
 '''
 
-
-class Database:
     
-    def __init__(self):
-        self.__db_connection = sqlite3.connect(__PATHS.database, check_same_thread=False)
+    def __init__(self, database_path:str):
+        
+        self.__db_connection = sqlite3.connect(database_path, check_same_thread=False)
         self.__cursor = self.__db_connection.cursor()        
         
     def close(self):
@@ -220,13 +217,13 @@ ORDER BY Ar.Name, Ab.Title'''.format(''' AND '''.join(item for item in WHERE)), 
       
       
         if WHERE == []:
-            self.__cursor.execute('''{} GROUP BY T.TrackID ORDER BY Ar.Name, Ab.Title, T.Title'''.format(self._standard_track_query))
+            self.__cursor.execute('''{} GROUP BY T.TrackID ORDER BY Ar.Name, Ab.Title, T.Title'''.format(self.__STANDARD_TRACK_QUERY))
         else:
             self.__cursor.execute('''
 {} 
 WHERE {}
 GROUP BY T.TrackID
-ORDER BY Ar.Name, Ab.Title, T.Title'''.format(self._standard_track_query, ''' AND '''.join(item for item in WHERE)), ARGS)
+ORDER BY Ar.Name, Ab.Title, T.Title'''.format(self.__STANDARD_TRACK_QUERY, ''' AND '''.join(item for item in WHERE)), ARGS)
             
         return self.__cursor.fetchall()
    
@@ -242,7 +239,7 @@ ORDER BY Ar.Name, Ab.Title, T.Title'''.format(self._standard_track_query, ''' AN
     
     def get_tracks_from_ids(self, track_ids):
         
-        query='''{} WHERE T.TrackID IN ({})'''.format(self._standard_track_query, ','.join('?'*len(track_ids)))
+        query='''{} WHERE T.TrackID IN ({})'''.format(self.__STANDARD_TRACK_QUERY, ','.join('?'*len(track_ids)))
 
         self.__cursor.execute(query, track_ids)
 
@@ -285,7 +282,7 @@ WHERE P.PlaylistID = ?''', (playlist_id,))
 {}
 WHERE T.Uri IN (SELECT Uri FROM CoreTracks GROUP BY Uri HAVING COUNT(*) > 1)    
 GROUP BY T.TrackID
-ORDER BY T.Uri'''.format(self._standard_track_query))
+ORDER BY T.Uri'''.format(self.__STANDARD_TRACK_QUERY))
 
         return self.__cursor.fetchall()
 
