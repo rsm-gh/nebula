@@ -319,6 +319,14 @@ ORDER BY T.Uri'''.format(self.__STANDARD_TRACK_QUERY))
         return self.__cursor.fetchall()
 
     
+    def get_tracks_with_unexisting_uri(self):
+        
+        track_ids = self.get_track_ids_with_unexisting_uri()
+        
+        tracks_data = self.get_tracks_from_ids(track_ids)
+    
+        return tracks_data
+    
     def get_track_ids_with_unexisting_uri(self):
         """
             Find all tracks ids that have an unexisting uri

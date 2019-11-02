@@ -134,6 +134,12 @@ class GUI(Gtk.Window):
     __ALL_ARTISTS_ID = -1
     __ALL_ALBUMS_ID = -1
     
+    __LST_GEN_ALL_MUSIC_INDEX = 0
+    __LST_GEN_PLAY_QUEUE_INDEX = 1
+    __LST_GEN_HISTORIAL_INDEX = 2
+    __LST_GEN_MISSING_INDEX = 3
+    __LST_GEN_DUPLICATED_INDEX = 4
+    __LST_GEN_COUNT_COLUMN = 2
         
     def __init__(self):
         
@@ -169,10 +175,10 @@ class GUI(Gtk.Window):
                 'paned_middle',
                 'menubar',
                 'liststore_genres','liststore_artists','liststore_playlists','liststore_tracks','liststore_albums',
-                    'liststore_general_playlists', 'liststore_tracks_historial', 'liststore_tracks_queue',
+                    'liststore_general_playlists', 'liststore_tracks_historial', 'liststore_tracks_queue', 'liststore_tracks_missing',
                 'liststore_completion_artists', 'liststore_completion_genres','liststore_completion_albums',
                 'treeview_RT_tracks_queue', 'treeview_RT_genres', 'treeview_RT_tracks', 'treeview_RT_artists','iconview_RT_albums',
-                    'treeview_RT_tracks_historial',
+                    'treeview_RT_tracks_historial','treeview_RT_tracks_missing',
                 'treeview_selection_playlists','treeview_selection_queue', 'treeview_selection_historial',
                     'treeview_selection_general_playlists', 'treeview_selection_genres', 'treeview_selection_artists',
                     'treeview_selection_tracks',
@@ -182,8 +188,8 @@ class GUI(Gtk.Window):
                     'radiomenuitem_repeat_all','menuitem_edit_tracks',
                 'button_RT_play_pause','toolbutton_RT_next','searchentry','box_current_album','volumebutton','scale_RT_track_progress',
                 'spinner','main_progessbar',
-                'box_playing','box_queue','box_playing','box_historial','box_top_queue_tools','box_historial_tools',
-                
+                'box_playing','box_queue','box_playing','box_historial','box_missing','box_top_queue_tools','box_historial_tools',
+                'scrolledwindow_missing_tracks','label_loading_missing_tracks',
             'indicator_menu',
                 'indicator_menu_button','menuitem_indicator_button',
             
@@ -364,6 +370,7 @@ class GUI(Gtk.Window):
         
         self.box_queue.hide()
         self.box_historial.hide()
+        self.box_missing.hide()
         self.box_playing.show()
         self.box_top_queue_tools.hide()
         self.box_historial_tools.hide()
@@ -458,6 +465,7 @@ class GUI(Gtk.Window):
         self.db_populate_albums=Database(PATHS.database)
         self.db_populate_artists_genres=Database(PATHS.database)
         self.db_populate_tracks=Database(PATHS.database)
+        self.db_populate_missing=Database(PATHS.database)
         self.db_track_editor=Database(PATHS.database)
         self.db_track_delete=Database(PATHS.database)
         
@@ -587,7 +595,6 @@ class GUI(Gtk.Window):
         Thread(target=self.thread_player_manager).start()
         Thread(target=self.thread_populator_manager).start()
         
-        
         # Wait untill all has been populated
         spinner_state=False
         while True:
@@ -602,11 +609,17 @@ class GUI(Gtk.Window):
         
 
         # update the tracks count number: All Music X
-        self.liststore_general_playlists[0][2]=self.db_main_thread.get_tracks_count()    
+        self.liststore_general_playlists[self.__LST_GEN_ALL_MUSIC_INDEX][self.__LST_GEN_COUNT_COLUMN]=self.db_main_thread.get_tracks_count()    
     
         Gdk.threads_enter()
         self.startup_progressbar.set_fraction(0.90)
         Gdk.threads_leave()
+        
+        
+        """
+            Update the missing tracks
+        """
+        Thread(target=self.__update_missing_tracks).start()
     
     
         """
@@ -634,6 +647,7 @@ class GUI(Gtk.Window):
         self.startup_progressbar.set_fraction(1)
         Gdk.threads_leave()
         
+            
     
         """ 
             Display the GUI
@@ -1226,10 +1240,10 @@ class GUI(Gtk.Window):
                 
         if thread:
             Gdk.threads_enter()
-            self.liststore_general_playlists[1][2] = len(self.liststore_tracks_queue)
+            self.liststore_general_playlists[self.__LST_GEN_PLAY_QUEUE_INDEX][self.__LST_GEN_COUNT_COLUMN] = len(self.liststore_tracks_queue)
             Gdk.threads_leave()
         else:
-            self.liststore_general_playlists[1][2] = len(self.liststore_tracks_queue)
+            self.liststore_general_playlists[self.__LST_GEN_PLAY_QUEUE_INDEX][self.__LST_GEN_COUNT_COLUMN] = len(self.liststore_tracks_queue)
 
     def DELETE_tracks_from_queue(self, track_ids, thread=False):
         
@@ -1239,11 +1253,11 @@ class GUI(Gtk.Window):
                 self.liststore_tracks_queue.clear()
                 Gdk.threads_enter()
                 Gdk.threads_enter()
-                self.liststore_general_playlists[1][2] = 0
+                self.liststore_general_playlists[self.__LST_GEN_PLAY_QUEUE_INDEX][self.__LST_GEN_COUNT_COLUMN] = 0
                 Gdk.threads_leave()
             else:
                 self.liststore_tracks_queue.clear()
-                self.liststore_general_playlists[1][2] = 0
+                self.liststore_general_playlists[self.__LST_GEN_PLAY_QUEUE_INDEX][self.__LST_GEN_COUNT_COLUMN] = 0
         else:
             for track_id in track_ids:
                 if thread:
@@ -1255,10 +1269,10 @@ class GUI(Gtk.Window):
                     
             if thread:
                 Gdk.threads_enter()
-                self.liststore_general_playlists[1][2] = len(self.liststore_tracks_queue)
+                self.liststore_general_playlists[self.__LST_GEN_PLAY_QUEUE_INDEX][self.__LST_GEN_COUNT_COLUMN] = len(self.liststore_tracks_queue)
                 Gdk.threads_leave()
             else:
-                self.liststore_general_playlists[1][2] = len(self.liststore_tracks_queue)
+                self.liststore_general_playlists[self.__LST_GEN_PLAY_QUEUE_INDEX][self.__LST_GEN_COUNT_COLUMN] = len(self.liststore_tracks_queue)
 
 
 
@@ -1445,7 +1459,7 @@ class GUI(Gtk.Window):
                 # Add the track to the historial
                 #
                 Gdk.threads_enter()
-                self.liststore_general_playlists[2][2]=self.liststore_general_playlists[2][2]+1
+                self.liststore_general_playlists[self.__LST_GEN_HISTORIAL_INDEX][self.__LST_GEN_COUNT_COLUMN]=self.liststore_general_playlists[2][2]+1
                 Gdk.threads_leave()
                 
                 Gdk.threads_enter()
@@ -1469,7 +1483,7 @@ class GUI(Gtk.Window):
                 
                 # add the track to the historial
                 #
-                self.liststore_general_playlists[2][2]=self.liststore_general_playlists[2][2]+1
+                self.liststore_general_playlists[self.__LST_GEN_HISTORIAL_INDEX][self.__LST_GEN_COUNT_COLUMN]=[self.__LST_GEN_HISTORIAL_INDEX][self.__LST_GEN_COUNT_COLUMN]+1
                 self.liststore_tracks_historial.append(track)
                 
                 
@@ -1539,7 +1553,7 @@ class GUI(Gtk.Window):
             self.liststore_tracks_queue.remove(self.liststore_tracks_queue.get_iter_first())
             Gdk.threads_leave()
             Gdk.threads_enter()
-            self.liststore_general_playlists[1][2] = len(self.liststore_tracks_queue)
+            self.liststore_general_playlists[self.__LST_GEN_PLAY_QUEUE_INDEX][self.__LST_GEN_COUNT_COLUMN] = len(self.liststore_tracks_queue)
             Gdk.threads_leave()
             
     
@@ -1627,14 +1641,17 @@ class GUI(Gtk.Window):
             selection=int(str(treepath))
             break
             
-        if selection <= 0:  # playlist & all music
+        if selection <= self.__LST_GEN_ALL_MUSIC_INDEX:  # playlist & all music
             return self.treeview_RT_tracks
             
-        elif selection == 1: # queue
+        elif selection == self.__LST_GEN_PLAY_QUEUE_INDEX: # queue
             return self.treeview_RT_tracks_queue
             
-        elif selection == 2: # historial
+        elif selection == self.__LST_GEN_HISTORIAL_INDEX: # historial
             return self.treeview_RT_tracks_historial
+        
+        elif selection == self.__LST_GEN_MISSING_INDEX:
+            return self.treeview_RT_tracks_missing
 
 
     def TRACK_Editor_update_dialog(self):
@@ -1737,6 +1754,77 @@ class GUI(Gtk.Window):
             track_data[position]=getattr(self, item).get_value()
         
         self._tracks_to_edit[self._track_editor_current_position]=track_data
+    
+    
+    def __update_missing_tracks(self):
+        
+        # Display the loading label
+        #
+        Gdk.threads_enter()
+        self.label_loading_missing_tracks.show()
+        Gdk.threads_leave()
+        
+        Gdk.threads_enter()
+        self.scrolledwindow_missing_tracks.hide()
+        Gdk.threads_leave()
+        
+        
+        # get the data from the database
+        #
+        tracks = self.db_populate_missing.get_tracks_with_unexisting_uri()
+        
+
+        # Update the liststore count
+        #        
+        Gdk.threads_enter()
+        self.liststore_general_playlists[self.__LST_GEN_MISSING_INDEX][self.__LST_GEN_COUNT_COLUMN]=len(tracks)
+        Gdk.threads_leave()
+        
+        
+        self.UPDATE_track_label_stats(tracks)
+        
+        # Populate the liststore 
+        #
+                    
+        Gdk.threads_enter()
+        self.treeview_RT_tracks_missing.set_sensitive(False)
+        Gdk.threads_leave()
+        Gdk.threads_enter()
+        self.treeview_RT_tracks_missing.set_model(None)
+        Gdk.threads_leave()
+        Gdk.threads_enter()
+        self.treeview_RT_tracks_missing.freeze_child_notify()
+        Gdk.threads_leave()
+    
+        self.liststore_tracks_missing.clear()
+        self.liststore_tracks_missing.set_default_sort_func(lambda *unused: 0)
+        self.liststore_tracks_missing.set_sort_column_id(-1, Gtk.SortType.ASCENDING)
+        
+        for track in tracks:
+            self.liststore_tracks_missing.append(track)
+
+        Gdk.threads_enter()
+        self.treeview_RT_tracks_missing.set_model(self.liststore_tracks)
+        Gdk.threads_leave()
+        
+        Gdk.threads_enter()
+        self.treeview_RT_tracks_missing.thaw_child_notify()
+        Gdk.threads_leave()
+        
+        Gdk.threads_enter()
+        self.treeview_RT_tracks_missing.set_sensitive(True)
+        Gdk.threads_leave()
+        
+        # Display the treeview
+        #
+        Gdk.threads_enter()
+        self.label_loading_missing_tracks.hide()
+        Gdk.threads_leave()
+        
+        Gdk.threads_enter()
+        self.scrolledwindow_missing_tracks.show()
+        Gdk.threads_leave()
+        
         
         
     def UPDATE_track_liststores(self, tracks_ids_OR_data):
@@ -1783,7 +1871,7 @@ class GUI(Gtk.Window):
         
         Gdk.threads_enter()
         self.label_songs_stats.set_text(label_string)
-        Gdk.threads_leave()            
+        Gdk.threads_leave()
 
         
 
@@ -1965,6 +2053,12 @@ class GUI(Gtk.Window):
         GLib.idle_add(self.main_progessbar.set_text, "")
         GLib.idle_add(self.__update_progress_bar, 0)
         
+        
+        """
+            Update the missing tracks
+        """
+        self.__update_missing_tracks()
+        
 
     def __set_watch_cursor(self):
         watch = Gdk.Cursor(Gdk.CursorType.WATCH)
@@ -2069,16 +2163,21 @@ class GUI(Gtk.Window):
             playing_boxes=(
                 (self.box_playing, self.searchentry),
                 (self.box_top_queue_tools, self.box_queue),
-                (self.box_historial_tools, self.box_historial)
+                (self.box_historial_tools, self.box_historial),
+                (self.box_missing, None)
             )
 
             for i, (item1, item2) in enumerate(playing_boxes):
                 if i != treepath:
                     item1.hide()
-                    item2.hide()
+                    
+                    if not item2 is None:
+                        item2.hide()
                 else:
                     item1.show()
-                    item2.show()
+                    
+                    if not item2 is None:
+                        item2.show()
 
             if treepaths != []:
                 self.APPEND_request_to_queue()
@@ -2476,6 +2575,7 @@ class GUI(Gtk.Window):
         self.db_populate_albums.close()
         self.db_populate_artists_genres.close()
         self.db_populate_tracks.close()
+        self.db_populate_missing.close()
         self.db_track_editor.close()
         self.db_track_delete.close()
         Gtk.main_quit()
