@@ -16,7 +16,6 @@
 #   along with this program; if not, write to the Free Software Foundation,
 #   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA.
 
-
     #TODO: Activate the spin when modifiying data
     #TODO: Finish "edit tracks" for albums, and add to queue for all
 
@@ -70,9 +69,9 @@ from model.DataRequest import DataRequest
 
 from view.CellRenderers.CellRendererRating import CellRendererRating
 from view.CellRenderers.CellRendererTrackTime import CellRendererTrackTime, FORMAT_miliseconds
-from view.CellRenderers.CellRendererBytes import CellRendererBytes, FORMAT_bytes
+from view.CellRenderers.CellRendererBytes import CellRendererBytes, format_bytes
 from view.CellRenderers.CellRendererTimeStamp import CellRendererTimeStamp
-from view.CellRenderers.CellRendererURI import CellRendererURI, FORMAT_uri
+from view.CellRenderers.CellRendererURI import CellRendererURI, format_uri
 from view.CellRenderers.CellRendererLongText import CellRendererLongText
 from view.CellRenderers.CellRendererAlbum import CellRendererAlbum
 
@@ -1391,7 +1390,7 @@ class GUI(Gtk.Window):
 
         artwork_id=self.db_main_thread.get_artwork_id_from_album_id(album_id)
 
-        path=FORMAT_uri(path)
+        path=format_uri(path)
         
         if safe_thread:
             for child in self.box_current_album.get_children():
@@ -1860,11 +1859,11 @@ class GUI(Gtk.Window):
             label_string=""
             
         elif len(tracks) == 1:
-            tracks_size=FORMAT_bytes(tracks[0][15])
+            tracks_size=format_bytes(tracks[0][15])
             play_time_str=str(timedelta(seconds=(tracks[0][19]//1000))).rsplit(':',1)[0]
             label_string="{:,} Song ~ {} ~ {}".format(len(tracks), play_time_str, tracks_size)
         else:
-            tracks_size=FORMAT_bytes(sum(row[15] for row in tracks))
+            tracks_size=format_bytes(sum(row[15] for row in tracks))
             play_time_seconds=sum(row[19] for row in tracks)//1000
             play_time_str=str(timedelta(seconds=play_time_seconds)).rsplit(':',1)[0]
             label_string="{:,} Songs ~ {} ~ {}".format(len(tracks), play_time_str, tracks_size)
