@@ -673,6 +673,64 @@
       <column type="gint"/>
     </columns>
   </object>
+  <object class="GtkListStore" id="liststore_tracks_duplicated">
+    <columns>
+      <!-- column-name track_id -->
+      <column type="gint"/>
+      <!-- column-name track_number -->
+      <column type="gint"/>
+      <!-- column-name title -->
+      <column type="gchararray"/>
+      <!-- column-name album -->
+      <column type="gchararray"/>
+      <!-- column-name album_artist -->
+      <column type="gchararray"/>
+      <!-- column-name artist -->
+      <column type="gchararray"/>
+      <!-- column-name bit_rate -->
+      <column type="gint"/>
+      <!-- column-name bits_per_sample -->
+      <column type="gint"/>
+      <!-- column-name bits_per_minute -->
+      <column type="gint"/>
+      <!-- column-name comment -->
+      <column type="gchararray"/>
+      <!-- column-name composer -->
+      <column type="gchararray"/>
+      <!-- column-name conductor -->
+      <column type="gchararray"/>
+      <!-- column-name date_added -->
+      <column type="glong"/>
+      <!-- column-name disc_count -->
+      <column type="gint"/>
+      <!-- column-name file_location -->
+      <column type="gchararray"/>
+      <!-- column-name file_size -->
+      <column type="glong"/>
+      <!-- column-name genre -->
+      <column type="gchararray"/>
+      <!-- column-name album_id -->
+      <column type="gint"/>
+      <!-- column-name rating -->
+      <column type="gint"/>
+      <!-- column-name time -->
+      <column type="glong"/>
+      <!-- column-name last_played -->
+      <column type="glong"/>
+      <!-- column-name last_skipped -->
+      <column type="glong"/>
+      <!-- column-name skip_count -->
+      <column type="gint"/>
+      <!-- column-name play_count -->
+      <column type="gint"/>
+      <!-- column-name score -->
+      <column type="gint"/>
+      <!-- column-name year -->
+      <column type="gint"/>
+      <!-- column-name delete -->
+      <column type="gboolean"/>
+    </columns>
+  </object>
   <object class="GtkListStore" id="liststore_tracks_historial">
     <columns>
       <!-- column-name track_id -->
@@ -3318,6 +3376,405 @@ audio-volume-medium-symbolic</property>
                     <property name="expand">True</property>
                     <property name="fill">True</property>
                     <property name="position">3</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkBox" id="box_duplicated">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="orientation">vertical</property>
+                    <child>
+                      <object class="GtkScrolledWindow" id="scrolledwindow_duplicated_tracks">
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="shadow_type">in</property>
+                        <child>
+                          <object class="GtkTreeView" id="treeview_RT_tracks_duplicated">
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="model">liststore_tracks_duplicated</property>
+                            <property name="rules_hint">True</property>
+                            <property name="search_column">1</property>
+                            <property name="fixed_height_mode">True</property>
+                            <child internal-child="selection">
+                              <object class="GtkTreeSelection">
+                                <property name="mode">multiple</property>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkTreeViewColumn" id="treeviewcolumn_h73">
+                                <property name="resizable">True</property>
+                                <property name="sizing">fixed</property>
+                                <property name="title" translatable="yes">Delete</property>
+                                <property name="clickable">True</property>
+                                <child>
+                                  <object class="GtkCellRendererToggle" id="cellrenderertggle49"/>
+                                  <attributes>
+                                    <attribute name="active">26</attribute>
+                                  </attributes>
+                                </child>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkTreeViewColumn" id="treeviewcolumn_h49">
+                                <property name="resizable">True</property>
+                                <property name="sizing">fixed</property>
+                                <property name="title" translatable="yes">Track Number</property>
+                                <property name="clickable">True</property>
+                                <property name="reorderable">True</property>
+                                <child>
+                                  <object class="GtkCellRendererText" id="cellrenderertext70"/>
+                                  <attributes>
+                                    <attribute name="text">1</attribute>
+                                  </attributes>
+                                </child>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkTreeViewColumn" id="treeviewcolumn_h50">
+                                <property name="resizable">True</property>
+                                <property name="sizing">fixed</property>
+                                <property name="fixed_width">210</property>
+                                <property name="title" translatable="yes">Name</property>
+                                <property name="clickable">True</property>
+                                <property name="reorderable">True</property>
+                                <child>
+                                  <object class="GtkCellRendererText" id="cellrenderertext71"/>
+                                  <attributes>
+                                    <attribute name="text">2</attribute>
+                                  </attributes>
+                                </child>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkTreeViewColumn" id="treeviewcolumn_h51">
+                                <property name="resizable">True</property>
+                                <property name="sizing">fixed</property>
+                                <property name="fixed_width">280</property>
+                                <property name="title" translatable="yes">Album</property>
+                                <property name="clickable">True</property>
+                                <property name="reorderable">True</property>
+                                <child>
+                                  <object class="GtkCellRendererText" id="cellrenderertext76"/>
+                                  <attributes>
+                                    <attribute name="text">3</attribute>
+                                  </attributes>
+                                </child>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkTreeViewColumn" id="treeviewcolumn_h52">
+                                <property name="resizable">True</property>
+                                <property name="sizing">fixed</property>
+                                <property name="fixed_width">280</property>
+                                <property name="title" translatable="yes">Album Artist</property>
+                                <property name="clickable">True</property>
+                                <property name="reorderable">True</property>
+                                <child>
+                                  <object class="GtkCellRendererText" id="cellrenderertext77"/>
+                                  <attributes>
+                                    <attribute name="text">4</attribute>
+                                  </attributes>
+                                </child>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkTreeViewColumn" id="treeviewcolumn_h53">
+                                <property name="resizable">True</property>
+                                <property name="sizing">fixed</property>
+                                <property name="fixed_width">280</property>
+                                <property name="title" translatable="yes">Artist</property>
+                                <property name="clickable">True</property>
+                                <property name="reorderable">True</property>
+                                <child>
+                                  <object class="GtkCellRendererText" id="cellrenderertext78"/>
+                                  <attributes>
+                                    <attribute name="text">5</attribute>
+                                  </attributes>
+                                </child>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkTreeViewColumn" id="treeviewcolumn_h54">
+                                <property name="resizable">True</property>
+                                <property name="sizing">fixed</property>
+                                <property name="fixed_width">100</property>
+                                <property name="title" translatable="yes">Bit Rate</property>
+                                <property name="clickable">True</property>
+                                <property name="reorderable">True</property>
+                                <child>
+                                  <object class="GtkCellRendererText" id="cellrenderertext79"/>
+                                  <attributes>
+                                    <attribute name="text">6</attribute>
+                                  </attributes>
+                                </child>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkTreeViewColumn" id="treeviewcolumn_h55">
+                                <property name="resizable">True</property>
+                                <property name="sizing">fixed</property>
+                                <property name="title" translatable="yes">Bit Per Sample</property>
+                                <property name="clickable">True</property>
+                                <property name="reorderable">True</property>
+                                <child>
+                                  <object class="GtkCellRendererText" id="cellrenderertext80"/>
+                                  <attributes>
+                                    <attribute name="text">7</attribute>
+                                  </attributes>
+                                </child>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkTreeViewColumn" id="treeviewcolumn_h56">
+                                <property name="resizable">True</property>
+                                <property name="sizing">fixed</property>
+                                <property name="fixed_width">100</property>
+                                <property name="title" translatable="yes">Bit Per Minute</property>
+                                <property name="clickable">True</property>
+                                <property name="reorderable">True</property>
+                                <child>
+                                  <object class="GtkCellRendererText" id="cellrenderertext81"/>
+                                  <attributes>
+                                    <attribute name="text">8</attribute>
+                                  </attributes>
+                                </child>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkTreeViewColumn" id="treeviewcolumn_h57">
+                                <property name="resizable">True</property>
+                                <property name="sizing">fixed</property>
+                                <property name="fixed_width">100</property>
+                                <property name="title" translatable="yes">Comment</property>
+                                <property name="clickable">True</property>
+                                <property name="reorderable">True</property>
+                                <child>
+                                  <object class="GtkCellRendererText" id="cellrenderertext82"/>
+                                  <attributes>
+                                    <attribute name="text">9</attribute>
+                                  </attributes>
+                                </child>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkTreeViewColumn" id="treeviewcolumn_h58">
+                                <property name="resizable">True</property>
+                                <property name="sizing">fixed</property>
+                                <property name="fixed_width">100</property>
+                                <property name="title" translatable="yes">Composer</property>
+                                <property name="clickable">True</property>
+                                <property name="reorderable">True</property>
+                                <child>
+                                  <object class="GtkCellRendererText" id="cellrenderertext83"/>
+                                  <attributes>
+                                    <attribute name="text">10</attribute>
+                                  </attributes>
+                                </child>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkTreeViewColumn" id="treeviewcolumn_h59">
+                                <property name="resizable">True</property>
+                                <property name="sizing">fixed</property>
+                                <property name="fixed_width">100</property>
+                                <property name="title" translatable="yes">Conductor</property>
+                                <property name="clickable">True</property>
+                                <property name="reorderable">True</property>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkTreeViewColumn" id="treeviewcolumn_h60">
+                                <property name="resizable">True</property>
+                                <property name="sizing">fixed</property>
+                                <property name="fixed_width">100</property>
+                                <property name="title" translatable="yes">Date Added</property>
+                                <property name="clickable">True</property>
+                                <property name="reorderable">True</property>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkTreeViewColumn" id="treeviewcolumn_h61">
+                                <property name="resizable">True</property>
+                                <property name="sizing">fixed</property>
+                                <property name="fixed_width">100</property>
+                                <property name="title" translatable="yes">Disc Count</property>
+                                <property name="clickable">True</property>
+                                <property name="reorderable">True</property>
+                                <child>
+                                  <object class="GtkCellRendererText" id="cellrenderertext84"/>
+                                  <attributes>
+                                    <attribute name="text">13</attribute>
+                                  </attributes>
+                                </child>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkTreeViewColumn" id="treeviewcolumn_h62">
+                                <property name="resizable">True</property>
+                                <property name="sizing">fixed</property>
+                                <property name="fixed_width">100</property>
+                                <property name="title" translatable="yes">File Location</property>
+                                <property name="clickable">True</property>
+                                <property name="reorderable">True</property>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkTreeViewColumn" id="treeviewcolumn_h63">
+                                <property name="resizable">True</property>
+                                <property name="sizing">fixed</property>
+                                <property name="fixed_width">100</property>
+                                <property name="title" translatable="yes">File Size</property>
+                                <property name="clickable">True</property>
+                                <property name="reorderable">True</property>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkTreeViewColumn" id="treeviewcolumn_h64">
+                                <property name="resizable">True</property>
+                                <property name="sizing">fixed</property>
+                                <property name="fixed_width">100</property>
+                                <property name="title" translatable="yes">Genre</property>
+                                <property name="clickable">True</property>
+                                <property name="reorderable">True</property>
+                                <child>
+                                  <object class="GtkCellRendererText" id="cellrenderertext85"/>
+                                  <attributes>
+                                    <attribute name="text">16</attribute>
+                                  </attributes>
+                                </child>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkTreeViewColumn" id="treeviewcolumn_h65">
+                                <property name="resizable">True</property>
+                                <property name="sizing">fixed</property>
+                                <property name="fixed_width">100</property>
+                                <property name="title" translatable="yes">Rating</property>
+                                <property name="clickable">True</property>
+                                <property name="reorderable">True</property>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkTreeViewColumn" id="treeviewcolumn_h66">
+                                <property name="resizable">True</property>
+                                <property name="sizing">fixed</property>
+                                <property name="fixed_width">60</property>
+                                <property name="title" translatable="yes">Time</property>
+                                <property name="clickable">True</property>
+                                <property name="reorderable">True</property>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkTreeViewColumn" id="treeviewcolumn_h67">
+                                <property name="resizable">True</property>
+                                <property name="sizing">fixed</property>
+                                <property name="fixed_width">100</property>
+                                <property name="title" translatable="yes">Last Played</property>
+                                <property name="clickable">True</property>
+                                <property name="reorderable">True</property>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkTreeViewColumn" id="treeviewcolumn_h68">
+                                <property name="resizable">True</property>
+                                <property name="sizing">fixed</property>
+                                <property name="fixed_width">100</property>
+                                <property name="title" translatable="yes">Last Skipped</property>
+                                <property name="clickable">True</property>
+                                <property name="reorderable">True</property>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkTreeViewColumn" id="treeviewcolumn_h69">
+                                <property name="resizable">True</property>
+                                <property name="sizing">fixed</property>
+                                <property name="fixed_width">100</property>
+                                <property name="title" translatable="yes">Skip Count</property>
+                                <property name="clickable">True</property>
+                                <property name="reorderable">True</property>
+                                <child>
+                                  <object class="GtkCellRendererText" id="cellrenderertext86"/>
+                                  <attributes>
+                                    <attribute name="text">22</attribute>
+                                  </attributes>
+                                </child>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkTreeViewColumn" id="treeviewcolumn_h70">
+                                <property name="resizable">True</property>
+                                <property name="sizing">fixed</property>
+                                <property name="fixed_width">100</property>
+                                <property name="title" translatable="yes">Play Count</property>
+                                <property name="clickable">True</property>
+                                <property name="reorderable">True</property>
+                                <child>
+                                  <object class="GtkCellRendererText" id="cellrenderertext87"/>
+                                  <attributes>
+                                    <attribute name="text">23</attribute>
+                                  </attributes>
+                                </child>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkTreeViewColumn" id="treeviewcolumn_h71">
+                                <property name="resizable">True</property>
+                                <property name="sizing">fixed</property>
+                                <property name="fixed_width">60</property>
+                                <property name="title" translatable="yes">Score</property>
+                                <property name="clickable">True</property>
+                                <property name="reorderable">True</property>
+                                <child>
+                                  <object class="GtkCellRendererText" id="cellrenderertext88"/>
+                                  <attributes>
+                                    <attribute name="text">24</attribute>
+                                  </attributes>
+                                </child>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkTreeViewColumn" id="treeviewcolumn_h72">
+                                <property name="resizable">True</property>
+                                <property name="sizing">fixed</property>
+                                <property name="fixed_width">60</property>
+                                <property name="title" translatable="yes">Year</property>
+                                <property name="clickable">True</property>
+                                <property name="reorderable">True</property>
+                                <child>
+                                  <object class="GtkCellRendererText" id="cellrenderertext89"/>
+                                  <attributes>
+                                    <attribute name="text">25</attribute>
+                                  </attributes>
+                                </child>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="expand">True</property>
+                        <property name="fill">True</property>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="label_loading_duplicated_tracks">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label" translatable="yes">The duplicated tracks are beeing loaded...</property>
+                      </object>
+                      <packing>
+                        <property name="expand">True</property>
+                        <property name="fill">True</property>
+                        <property name="position">1</property>
+                      </packing>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="expand">True</property>
+                    <property name="fill">True</property>
+                    <property name="position">4</property>
                   </packing>
                 </child>
               </object>

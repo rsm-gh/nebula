@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 #
+from numpy.distutils.fcompiler import none
 
 #  Copyright (C) 2016, 2019  Rafael Senties Martinelli 
 #
@@ -194,6 +195,73 @@ GROUP BY Ab.ArtworkID
 ORDER BY Ar.Name, Ab.Title'''.format(''' AND '''.join(item for item in WHERE)), ARGS)
 
         return self.__cursor.fetchall()
+
+
+    def __none_to_string(self, value):
+        
+        if value is None:
+            return ""
+        
+        return value
+        
+
+    def __duplicated_track_key(self, track_data):
+        
+        artist_name = self.__none_to_string(track_data[5])
+        album_title = self.__none_to_string(track_data[3])
+        track_title = self.__none_to_string(track_data[2])            
+    
+        key =  artist_name + album_title + track_title        
+
+        if key == "":
+            return none
+        
+        return key
+
+
+    def get_duplicated_tracks(self):
+        
+        tracks_dict = {}
+        
+        
+        #
+        # Find out the duplicated tracks
+        #
+        
+        tracks_data = self.get_tracks()
+        for track_data in tracks_data:
+            
+            track_key = self.__duplicated_track_key(track_data)
+            
+            if not track_key is None:
+                
+                if not track_key in tracks_dict.keys():
+                    tracks_dict[track_key] = 1
+                else:
+                    tracks_dict[track_key] = tracks_dict[track_key] + 1
+                
+                
+                
+        #
+        # Create a new list
+        #
+        
+        selected_tracks = []
+        duplicated_tracks = []
+        
+        for track_data in tracks_data:
+            
+            track_key = self.__duplicated_track_key(track_data)
+            
+            if not track_key is None and tracks_dict[track_key] > 1:
+                
+                if track_key in selected_tracks:
+                    duplicated_tracks.append([*track_data, True])
+                else:
+                    duplicated_tracks.append([*track_data, False])
+                    selected_tracks.append(track_key)
+        
+        return duplicated_tracks
 
 
     def get_tracks(self,

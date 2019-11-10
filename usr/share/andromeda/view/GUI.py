@@ -174,10 +174,10 @@ class GUI(Gtk.Window):
                 'paned_middle',
                 'menubar',
                 'liststore_genres','liststore_artists','liststore_playlists','liststore_tracks','liststore_albums',
-                    'liststore_general_playlists', 'liststore_tracks_historial', 'liststore_tracks_queue', 'liststore_tracks_missing',
+                    'liststore_general_playlists', 'liststore_tracks_historial', 'liststore_tracks_queue', 
                 'liststore_completion_artists', 'liststore_completion_genres','liststore_completion_albums',
                 'treeview_RT_tracks_queue', 'treeview_RT_genres', 'treeview_RT_tracks', 'treeview_RT_artists','iconview_RT_albums',
-                    'treeview_RT_tracks_historial','treeview_RT_tracks_missing',
+                    'treeview_RT_tracks_historial',
                 'treeview_selection_playlists','treeview_selection_queue', 'treeview_selection_historial',
                     'treeview_selection_general_playlists', 'treeview_selection_genres', 'treeview_selection_artists',
                     'treeview_selection_tracks',
@@ -187,8 +187,22 @@ class GUI(Gtk.Window):
                     'radiomenuitem_repeat_all','menuitem_edit_tracks',
                 'button_RT_play_pause','toolbutton_RT_next','searchentry','box_current_album','volumebutton','scale_RT_track_progress',
                 'spinner','main_progessbar',
-                'box_playing','box_queue','box_playing','box_historial','box_missing','box_top_queue_tools','box_historial_tools',
-                'scrolledwindow_missing_tracks','label_loading_missing_tracks',
+                'box_playing','box_queue','box_historial','box_top_queue_tools','box_historial_tools',
+
+                    
+                'box_missing',
+                    'scrolledwindow_missing_tracks',
+                        'treeview_RT_tracks_missing',
+                            'liststore_tracks_missing',
+                    'label_loading_missing_tracks',
+                    
+                'box_duplicated',
+                    'scrolledwindow_duplicated_tracks',
+                        'treeview_RT_tracks_duplicated',
+                            'liststore_tracks_duplicated',
+                    'label_loading_duplicated_tracks',
+                    
+            
             'indicator_menu',
                 'indicator_menu_button','menuitem_indicator_button',
             
@@ -370,6 +384,7 @@ class GUI(Gtk.Window):
         self.box_queue.hide()
         self.box_historial.hide()
         self.box_missing.hide()
+        self.box_duplicated.hide()
         self.box_playing.show()
         self.box_top_queue_tools.hide()
         self.box_historial_tools.hide()
@@ -464,7 +479,7 @@ class GUI(Gtk.Window):
         self.db_populate_albums=Database(PATHS.database)
         self.db_populate_artists_genres=Database(PATHS.database)
         self.db_populate_tracks=Database(PATHS.database)
-        self.db_populate_missing=Database(PATHS.database)
+        self.db_populate_missing_and_duplicated=Database(PATHS.database)
         self.db_track_editor=Database(PATHS.database)
         self.db_track_delete=Database(PATHS.database)
         
@@ -618,7 +633,7 @@ class GUI(Gtk.Window):
         """
             Update the missing tracks
         """
-        Thread(target=self.__update_missing_tracks).start()
+        Thread(target=self.__update_missing_and_duplicated_tracks).start()
     
     
         """
@@ -1119,7 +1134,7 @@ class GUI(Gtk.Window):
                                                   albums_id=data_request._albums_id)
         
         
-        play_track_at_end = data_request._play_track 
+        play_track_at_end = data_request._play_track
         
 
         if tracks != self.cache_tracks or data_request._force_update:
@@ -1131,7 +1146,7 @@ class GUI(Gtk.Window):
                 play_track_at_end=False
 
             
-            self.UPDATE_track_label_stats(tracks)
+            self.__update_bottom_label_tracks_stats(tracks)
 
             ## It seems to be better to remove all items and selecting the previous item
             selected_track_id=gtk_get_first_selected_cell_from_selection(self.treeview_selection_tracks, column=0)
@@ -1431,7 +1446,7 @@ class GUI(Gtk.Window):
                 #
                 #if self.populating_state[2]==False: # and not self.menu_tracks.get_property('visible'):
                     #print('called')
-                    #gtk_select_row_from_cell(self.GET_visible_treeview(), 0, self.current_track_id)
+                    #gtk_select_row_from_cell(self.__get_selected_treeview(), 0, self.current_track_id)
                 
                 # update the GUI
                 #
@@ -1469,7 +1484,7 @@ class GUI(Gtk.Window):
                 #
                 #if self.populating_state[2]==False: # and not self.menu_tracks.get_property('visible'):
                     #print('called2')
-                    #gtk_select_row_from_cell(self.GET_visible_treeview(), 0, self.current_track_id)
+                    #gtk_select_row_from_cell(self.__get_selected_treeview(), 0, self.current_track_id)
 
                 # update the GUI
                 #
@@ -1627,7 +1642,7 @@ class GUI(Gtk.Window):
         if track_id is not None:
             self.PLAY_track(track_id, True)
 
-    def GET_visible_treeview(self):
+    def __get_selected_treeview(self):
         """
             Since the GUI works with many liststores, the idea of this method
             is to return the treeview_selection that is currently seen by the user.
@@ -1651,6 +1666,9 @@ class GUI(Gtk.Window):
         
         elif selection == self.__LST_GEN_MISSING_INDEX:
             return self.treeview_RT_tracks_missing
+        
+        elif selection == self.__LST_GEN_DUPLICATED_INDEX:
+            return self.treeview_RT_tracks_duplicated
 
 
     def TRACK_Editor_update_dialog(self):
@@ -1753,77 +1771,65 @@ class GUI(Gtk.Window):
             track_data[position]=getattr(self, item).get_value()
         
         self._tracks_to_edit[self._track_editor_current_position]=track_data
-    
-    
-    def __update_missing_tracks(self):
+        
+    def __update_missing_and_duplicated_tracks(self):
         
         # Display the loading label
         #
         Gdk.threads_enter()
         self.label_loading_missing_tracks.show()
         Gdk.threads_leave()
+
+        Gdk.threads_enter()
+        self.label_loading_duplicated_tracks.show()
+        Gdk.threads_leave()
         
         Gdk.threads_enter()
         self.scrolledwindow_missing_tracks.hide()
         Gdk.threads_leave()
         
+        Gdk.threads_enter()
+        self.scrolledwindow_duplicated_tracks.hide()
+        Gdk.threads_leave()        
         
-        # get the data from the database
+        
+        # Update the missing tracks
         #
-        tracks = self.db_populate_missing.get_tracks_with_unexisting_uri()
-        
-
-        # Update the liststore count
-        #        
+        tracks = self.db_populate_missing_and_duplicated.get_tracks_with_unexisting_uri()
+                
         Gdk.threads_enter()
         self.liststore_general_playlists[self.__LST_GEN_MISSING_INDEX][self.__LST_GEN_COUNT_COLUMN]=len(tracks)
         Gdk.threads_leave()
         
+        gtk_populate_threaded_treeview(tracks, self.treeview_RT_tracks_missing, self.liststore_tracks_missing)
         
-        self.UPDATE_track_label_stats(tracks)
-        
-        # Populate the liststore 
-        #
-                    
-        Gdk.threads_enter()
-        self.treeview_RT_tracks_missing.set_sensitive(False)
-        Gdk.threads_leave()
-        Gdk.threads_enter()
-        self.treeview_RT_tracks_missing.set_model(None)
-        Gdk.threads_leave()
-        Gdk.threads_enter()
-        self.treeview_RT_tracks_missing.freeze_child_notify()
-        Gdk.threads_leave()
-    
-        self.liststore_tracks_missing.clear()
-        self.liststore_tracks_missing.set_default_sort_func(lambda *unused: 0)
-        self.liststore_tracks_missing.set_sort_column_id(-1, Gtk.SortType.ASCENDING)
-        
-        for track in tracks:
-            self.liststore_tracks_missing.append(track)
-
-        Gdk.threads_enter()
-        self.treeview_RT_tracks_missing.set_model(self.liststore_tracks)
-        Gdk.threads_leave()
-        
-        Gdk.threads_enter()
-        self.treeview_RT_tracks_missing.thaw_child_notify()
-        Gdk.threads_leave()
-        
-        Gdk.threads_enter()
-        self.treeview_RT_tracks_missing.set_sensitive(True)
-        Gdk.threads_leave()
-        
-        # Display the treeview
-        #
         Gdk.threads_enter()
         self.label_loading_missing_tracks.hide()
         Gdk.threads_leave()
-        
+
         Gdk.threads_enter()
         self.scrolledwindow_missing_tracks.show()
         Gdk.threads_leave()
         
+        
+        
+        # Update the duplicated tracks
+        #
+        tracks = self.db_populate_missing_and_duplicated.get_duplicated_tracks()
+                
+        Gdk.threads_enter()
+        self.liststore_general_playlists[self.__LST_GEN_DUPLICATED_INDEX][self.__LST_GEN_COUNT_COLUMN]=len(tracks)
+        Gdk.threads_leave()
+        
+        gtk_populate_threaded_treeview(tracks, self.treeview_RT_tracks_duplicated, self.liststore_tracks_duplicated)
+        
+        Gdk.threads_enter()
+        self.label_loading_duplicated_tracks.hide()
+        Gdk.threads_leave()
+        
+        Gdk.threads_enter()
+        self.scrolledwindow_duplicated_tracks.show()
+        Gdk.threads_leave()
         
         
     def UPDATE_track_liststores(self, tracks_ids_OR_data):
@@ -1850,10 +1856,10 @@ class GUI(Gtk.Window):
                     Gdk.threads_leave()
                     
         
-    def UPDATE_track_label_stats(self, tracks=None):
+    def __update_bottom_label_tracks_stats(self, tracks=None):
  
         if tracks is None:
-            tracks=self.GET_visible_treeview().get_model()
+            tracks=self.__get_selected_treeview().get_model()
         
         if tracks is None or len(tracks) <= 0:
             label_string=""
@@ -1989,7 +1995,7 @@ class GUI(Gtk.Window):
             ignore_album = True
 
         elif self._current_edit_treeview == 'tracks':
-            treeview_selection = self.GET_visible_treeview().get_selection()
+            treeview_selection = self.__get_selected_treeview().get_selection()
             selected_track_ids = gtk_get_selected_cells_from_selection(treeview_selection, column=0)
             
         else:
@@ -2110,7 +2116,7 @@ class GUI(Gtk.Window):
         elif self._current_edit_treeview in ('tracks', 'queue', 'historial'):
             self._tracks_to_edit=self.db_main_thread.get_tracks_from_ids(
                                         gtk_get_selected_cells_from_selection(
-                                            self.GET_visible_treeview().get_selection()
+                                            self.__get_selected_treeview().get_selection()
                                         )
                                     )
         else:
@@ -2163,7 +2169,8 @@ class GUI(Gtk.Window):
                 (self.box_playing, self.searchentry),
                 (self.box_top_queue_tools, self.box_queue),
                 (self.box_historial_tools, self.box_historial),
-                (self.box_missing, None)
+                (self.box_missing, None),
+                (self.box_duplicated, None)
             )
 
             for i, (item1, item2) in enumerate(playing_boxes):
@@ -2181,7 +2188,7 @@ class GUI(Gtk.Window):
             if treepaths != []:
                 self.APPEND_request_to_queue()
             
-            Thread(target=self.UPDATE_track_label_stats).start()
+            Thread(target=self.__update_bottom_label_tracks_stats).start()
 
     def on_treeview_RT_playlists_button_press_event(self, treeview, event, data=None):
         
@@ -2445,7 +2452,7 @@ class GUI(Gtk.Window):
     def on_menuitem_add_to_queue_activate(self, menuitem, data=None):
         self.APPEND_tracks_to_queue(
             gtk_get_selected_cells_from_selection(
-                self.GET_visible_treeview().get_selection()
+                self.__get_selected_treeview().get_selection()
             )
         )
 
@@ -2574,7 +2581,7 @@ class GUI(Gtk.Window):
         self.db_populate_albums.close()
         self.db_populate_artists_genres.close()
         self.db_populate_tracks.close()
-        self.db_populate_missing.close()
+        self.db_populate_missing_and_duplicated.close()
         self.db_track_editor.close()
         self.db_track_delete.close()
         Gtk.main_quit()

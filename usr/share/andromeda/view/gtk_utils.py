@@ -18,8 +18,42 @@
 
 import gi
 gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk, GLib
+from gi.repository import Gtk, GLib, Gdk
 from random import shuffle
+
+def gtk_populate_threaded_treeview(tracks, treeview, liststore):
+    
+    Gdk.threads_enter()
+    treeview.set_sensitive(False)
+    Gdk.threads_leave()
+    
+    Gdk.threads_enter()
+    treeview.set_model(None)
+    Gdk.threads_leave()
+    
+    Gdk.threads_enter()
+    treeview.freeze_child_notify()
+    Gdk.threads_leave()
+
+    liststore.clear()
+    liststore.set_default_sort_func(lambda *unused: 0)
+    liststore.set_sort_column_id(-1, Gtk.SortType.ASCENDING)
+    
+    for track in tracks:
+        liststore.append(track)
+
+    Gdk.threads_enter()
+    treeview.set_model(liststore)
+    Gdk.threads_leave()
+    
+    Gdk.threads_enter()
+    treeview.thaw_child_notify()
+    Gdk.threads_leave()
+    
+    Gdk.threads_enter()
+    treeview.set_sensitive(True)
+    Gdk.threads_leave()
+
 
 def gtk_dialog_info(parent, text1, text2=None, icon=None):
 
