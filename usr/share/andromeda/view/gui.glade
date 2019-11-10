@@ -5807,7 +5807,7 @@ audio-volume-medium-symbolic</property>
             <property name="can_focus">False</property>
             <property name="halign">start</property>
             <property name="valign">start</property>
-            <property name="pixbuf">images/startup.jpg</property>
+            <property name="pixbuf">images/startup.png</property>
           </object>
           <packing>
             <property name="expand">False</property>
