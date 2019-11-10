@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 #
+from test.test_binop import isnum
 
 #  Copyright (C) 2016, 2019  Rafael Senties Martinelli 
 #
@@ -1863,16 +1864,37 @@ class GUI(Gtk.Window):
         
         if tracks is None or len(tracks) <= 0:
             label_string=""
-            
-        elif len(tracks) == 1:
-            tracks_size=format_bytes(tracks[0][15])
-            play_time_str=str(timedelta(seconds=(tracks[0][19]//1000))).rsplit(':',1)[0]
-            label_string="{:,} Song ~ {} ~ {}".format(len(tracks), play_time_str, tracks_size)
+        
         else:
-            tracks_size=format_bytes(sum(row[15] for row in tracks))
-            play_time_seconds=sum(row[19] for row in tracks)//1000
-            play_time_str=str(timedelta(seconds=play_time_seconds)).rsplit(':',1)[0]
-            label_string="{:,} Songs ~ {} ~ {}".format(len(tracks), play_time_str, tracks_size)
+            
+            if len(tracks) == 1:
+                tracks_size=format_bytes(tracks[0][15])
+                play_time_str=str(timedelta(seconds=(tracks[0][19]//1000))).rsplit(':',1)[0]
+            else:
+                tracks_size=format_bytes(sum(row[15] for row in tracks))
+                play_time_seconds=sum(row[19] for row in tracks)//1000
+                play_time_str=str(timedelta(seconds=play_time_seconds)).rsplit(':',1)[0]
+            
+            
+            # If the number of days is > 10, remove the hours string
+            #
+            if 'days' in play_time_str.lower():
+                nb_of_days = play_time_str.split(" ")[0]
+                
+                print(nb_of_days, nb_of_days.isdigit())
+                if nb_of_days.isdigit() and int(nb_of_days) > 10:
+                    play_time_str = play_time_str.split(',')[0] 
+                
+                
+            # Format the number of tracks
+            #
+            
+            nb_of_traks_str = "{:,}".format(len(tracks)).replace(","," ")
+            
+            # Format the global stringer
+            #
+                
+            label_string="{} tracks ~ {} ~ {}".format(nb_of_traks_str, play_time_str, tracks_size)
         
         Gdk.threads_enter()
         self.label_songs_stats.set_text(label_string)
