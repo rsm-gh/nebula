@@ -15,7 +15,7 @@
 #   along with this program; if not, write to the Free Software Foundation,
 #   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA.
 
-ANDROMEDA_VERSION="2019.10.20"
+ANDROMEDA_VERSION="Dev2019"
 NUMBER_OF_STEPS=2
 
 if [ "$EUID" -ne 0 ]
