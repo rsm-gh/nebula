@@ -32,16 +32,11 @@ def get_data(directory_path:str):
             
                 module=__import__(filename[:-3])
             
-                module_name=module.__name__
+                module_title=module.__title__
             
-                data['name']=module_name
+                data['name']=module_title
                 data['description']=module.__description__
                 data['version']=module.__version__
-                
-                try:
-                    data['date']=module.__date__
-                except:
-                    data['date']=''
                 
                 data['mantainer']=module.__mantainer__
                 
@@ -50,7 +45,7 @@ def get_data(directory_path:str):
                 except:
                     data['website']=''
             
-                if not module_name in plugins_dict.keys():
+                if not module_title in plugins_dict.keys():
                     plugins_dict[filename[:-3]]=data
                     
             except Exception:

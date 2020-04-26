@@ -26,11 +26,10 @@
     These are the general properties that your plugin should 
     always contain. They will be displayed at the Plugins Dialog.
 """
-__name__="Random Playlist"
+__title__="Random Playlist"
 __description__="Play a random playlist on startup."
-__version__="1.0~0"
-__date__="02/02/2016" # optional
-__mantainer__="Rafael Senties Martinelli "
+__version__="16.02.02-01" # Format YY.MM.DD-XX (Year.Month.Day-Day Version)
+__mantainer__="Rafael Senties Martinelli"
 __website__="https://senties-martinelli.com/software/andromeda/plugins" # optional
 
 

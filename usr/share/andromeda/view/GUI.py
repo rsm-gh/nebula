@@ -62,7 +62,7 @@ from controller.CCParser import CCParser
 from controller.Database import Database
 from controller.Player import Player
 from controller.utils import label_to_configuration_name
-from controller.plugin_factory import get_data as get_plugins_data
+from controller import plugin_factory
 from view.gtk_utils import *
 from view.texts import *
 from model.DataRequest import DataRequest
@@ -641,7 +641,7 @@ class GUI(Gtk.Window):
         Gdk.threads_leave()
         
         
-        for plugin_name in get_plugins_data(PATHS.plugins_dir).keys():
+        for plugin_name in plugin_factory.get_data(PATHS.plugins_dir).keys():
             
             if self.ccp.get_bool_defval(label_to_configuration_name(plugin_name), False):
                 try:
@@ -992,7 +992,7 @@ class GUI(Gtk.Window):
             self.plugins_box.remove(child)
         
         
-        for plugin_key, plugin in get_plugins_data(PATHS.plugins_dir).items():
+        for plugin_key, plugin in plugin_factory.get_data(PATHS.plugins_dir).items():
             
             main_box=Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
             main_box.set_margin_top(10)
@@ -1025,12 +1025,6 @@ class GUI(Gtk.Window):
             label.set_margin_top(10)
             label.set_markup("<span font_size='small'>Version: {}</span>".format(escape(plugin['version'])))
             labels_box.add(label)
-
-            if plugin['date'] != '':
-                label=Gtk.Label()
-                label.set_property('xalign', 0.0)
-                label.set_markup("<span font_size='small'>Date: {}</span>".format(plugin['date']))
-                labels_box.add(label)
 
             if plugin['website'] != '':
                 label=Gtk.Label()
