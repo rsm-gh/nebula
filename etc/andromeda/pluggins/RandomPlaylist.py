@@ -18,6 +18,11 @@
 
 
 """
+    Exemple of how to code a pluggin for the Andromeda Music Player.
+"""
+
+
+"""
     These are the general properties that your plugin should 
     always contain. They will be displayed at the Plugins Dialog.
 """
@@ -26,19 +31,19 @@ __description__="Play a random playlist on startup."
 __version__="1.0~0"
 __date__="02/02/2016" # optional
 __mantainer__="Rafael Senties Martinelli "
-__website__="https://rsm.website/software/gnu-linux/software/andromeda/plugins" # optional
+__website__="https://senties-martinelli.com/software/andromeda/plugins" # optional
 
 
-
-"""
-    The imports must be included in a function called `load_imports`,
-    this prevents the imports from being called when the plugin is not
-    activated.
-"""
 def load_imports():
+    """
+        The imports must be included in a function called `load_imports`.
+        It prevents making unnecessary imports when the plugin is not
+        activated.
+    """
+
 
     # Do not forget to add all the imports to the global scope
-    global gi, Gtk, Gdk, Thread, randint, sleep, label_to_configuration_name
+    global gi, Gtk, Gdk, Thread, randint, label_to_configuration_name
 
     import gi
     gi.require_version('Gtk', '3.0')
@@ -46,39 +51,32 @@ def load_imports():
 
     from threading import Thread
     from random import randint
-    from time import sleep    
 
 
-    from GUI import label_to_configuration_name
+    from controller.utils import label_to_configuration_name
 
 
-"""
-    The plugin must have a `Main` class. This is the one that will be 
-    executed by Andromeda at the initialization.
- 
-    *You should always try use threads so the GUI don't get blocked
-    at the initialization. 
-"""
 class Main:
-    
-    
     """
-        `main_self` is the `self` of Andromeda. With it you can do anything you want
-        and you should store in your class so you can use it. This is mostly a hack
-        but it works great! 
-        
-        The syntax I like is `self._`
-        
-        
-        the `__init__` method must also accept a `main_initialization` argument that
-        will inform you if the method is being called from the Andromeda initialization.
-        
-        This is useful if you want the initialization to be different when the user 
-        activates the plugin from the plugins window.
+        The plugin must have a `Main` class. This is the one that will be 
+        executed by Andromeda at the initialization.
+     
+        *Threads should always be used so the GUI don't get blocked. 
     """
-    def __init__(self, main_self, main_initialization):
-        
-        self._=main_self
+
+    
+    def __init__(self, parent, main_initialization):
+        """
+            `parent` is the Andromeda instance. With it you have acces to all the 
+             objects of the player.
+            
+            `main_initialization` is an argument thatcwill inform you if the method is 
+            being called from the Andromeda initialization.
+            
+            It is useful when the initialization must be different when the user activates 
+            the plugin from the plugins window.
+        """       
+        self.__parent=parent
     
         # Add a button to the configuration and initialize it
         #
@@ -90,8 +88,7 @@ class Main:
         # https://www.rsm.website/software/gnu-linux/modules/python-ccparser
         
         config_name=label_to_configuration_name(self.checkbox.get_label())
-        config_value=self._.ccp.get_bool_defval(config_name, True)  # if the config doesn't exists,
-                                                                    # we choose to activate it
+        config_value=self.__parent.ccp.get_bool_defval(config_name, True)  # if the config doesn't exists, we choose to activate it
         
         self.checkbox.set_active(config_value)                           # Set the status of the checkbox
         self.checkbox.connect('toggled', self.on_checkbox_configuration_toggled)
@@ -99,7 +96,7 @@ class Main:
             # Add the checkbox to the gui
         
             # To find the id of the objects use Glade on "gui.glade"
-        self.config_box=self._.builder.get_object('box30')
+        self.config_box=self.__parent.builder.get_object('box30')
         self.config_box.add(self.checkbox)
         self.config_box.show_all()
     
@@ -107,7 +104,7 @@ class Main:
         self.button=Gtk.Button(label="Random Playlist")
         self.button.connect('clicked', self.on_button_random_playlist_clicked)
         
-        self.playlists_box=self._.builder.get_object('box32') 
+        self.playlists_box=self.__parent.builder.get_object('box32') 
         self.playlists_box.add(self.button)
         self.playlists_box.show_all()
     
@@ -129,7 +126,7 @@ class Main:
             * Reading from the GUI does not require the protection.
         """
         
-        number_of_playlists=len(self._.liststore_playlists)
+        number_of_playlists=len(self.__parent.liststore_playlists)
         
         if number_of_playlists > 0:
             
@@ -137,15 +134,15 @@ class Main:
             choiced_liststore=randint(0, number_of_playlists-1)
                         
             Gdk.threads_enter()
-            self._.treeview_selection_general_playlists.unselect_all()
+            self.__parent.treeview_selection_general_playlists.unselect_all()
             Gdk.threads_leave()
             
             Gdk.threads_enter()
-            self._.treeview_selection_playlists.select_path(choiced_liststore)
+            self.__parent.treeview_selection_playlists.select_path(choiced_liststore)
             Gdk.threads_leave()
             
             # Request an update of the tracks and play a track when it ends
-            self._.APPEND_request_to_queue(True)
+            self.__parent.APPEND_request_to_queue(True)
 
     def on_checkbox_configuration_toggled(self, checkbox, data=None):
         """
@@ -156,7 +153,7 @@ class Main:
         
         # Fore more information about `ccp` CustomCCParser look at:
         # https://www.rsm.website/software/gnu-linux/modules/python-ccparser
-        self._.ccp.write(config_name, button_state)
+        self.__parent.ccp.write(config_name, button_state)
 
     def deactivate_plugin(self):
         """

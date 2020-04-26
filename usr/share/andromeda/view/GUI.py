@@ -1,8 +1,7 @@
 #!/usr/bin/python3
 #
-from test.test_binop import isnum
 
-#  Copyright (C) 2016, 2019  Rafael Senties Martinelli 
+#  Copyright (C) 2016, 2019-2020  Rafael Senties Martinelli 
 #
 #  This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License 3 as published by
@@ -62,6 +61,7 @@ from Paths import Paths
 from controller.CCParser import CCParser
 from controller.Database import Database
 from controller.Player import Player
+from controller.utils import label_to_configuration_name
 from controller.plugin_factory import get_data as get_plugins_data
 from view.gtk_utils import *
 from view.texts import *
@@ -123,11 +123,6 @@ TE_checkbuttons_items=(
     ('togglebutton_TE_9','combobox_entry_TE_license'),
     ('togglebutton_TE_10','entry_TE_comment'),
 )
-
-
-def label_to_configuration_name(label):
-    return label.lower().replace(' ','_')
-
 
 class GUI(Gtk.Window):
     
