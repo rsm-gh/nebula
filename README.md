@@ -2,7 +2,8 @@
 
 Andromeda is a music player powered by Python3, GTK3 and pyVLC. It has been developed for GNU/Linux Systems and its look and behavior is pretty similar to [Banshee](http://banshee.fm).
 
-Unless you want to try experimental software or contribute to the project you should not yet use it.
+Unless you want to try experimental software or contribute to the project you should not yet use it. I stopped developing this software because I moved to spotify... I may continue some day.
+
 
 ## How to Install
 
