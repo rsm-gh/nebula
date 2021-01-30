@@ -18,7 +18,7 @@
 
 
 """
-    Exemple of how to code a pluggin for the Andromeda Music Player.
+    This pluggin is an exemple of how to code extensions for the Andromeda Music Player.
 """
 
 
@@ -30,7 +30,7 @@ __title__="Random Playlist"
 __description__="Play a random playlist on startup."
 __version__="16.02.02-01" # Format YY.MM.DD-XX (Year.Month.Day-Day Version)
 __mantainer__="Rafael Senties Martinelli"
-__website__="https://senties-martinelli.com/software/andromeda/plugins" # optional
+__website__="https://github.com/rsm-gh/andromeda/blob/master/etc/andromeda/pluggins/RandomPlaylist.py" # optional
 
 
 def load_imports():
@@ -69,11 +69,8 @@ class Main:
             `parent` is the Andromeda instance. With it you have acces to all the 
              objects of the player.
             
-            `main_initialization` is an argument thatcwill inform you if the method is 
-            being called from the Andromeda initialization.
-            
-            It is useful when the initialization must be different when the user activates 
-            the plugin from the plugins window.
+            `main_initialization` informs if the method is being called at the Andrmeda startup.
+            It helps to differenciate when the pluggin is activated from the pluggin window.
         """       
         self.__parent=parent
     
@@ -92,9 +89,9 @@ class Main:
         self.checkbox.set_active(config_value)                           # Set the status of the checkbox
         self.checkbox.connect('toggled', self.on_checkbox_configuration_toggled)
         
-            # Add the checkbox to the gui
+        #         Add the checkbox to the gui
         
-            # To find the id of the objects use Glade on "gui.glade"
+        # To find the id of the objects use Glade on "gui.glade"
         self.config_box=self.__parent.builder.get_object('box30')
         self.config_box.add(self.checkbox)
         self.config_box.show_all()
@@ -125,7 +122,7 @@ class Main:
             * Reading from the GUI does not require the protection.
         """
         
-        number_of_playlists=len(self.__parent.liststore_playlists)
+        number_of_playlists = len(self.__parent.liststore_playlists)
         
         if number_of_playlists > 0:
             
