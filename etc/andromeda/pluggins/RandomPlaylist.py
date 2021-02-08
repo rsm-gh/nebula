@@ -29,7 +29,7 @@
 __title__="Random Playlist"
 __description__="Play a random playlist on startup."
 __version__="16.02.02-01" # Format YY.MM.DD-XX (Year.Month.Day-Day Version)
-__mantainer__="Rafael Senties Martinelli"
+__mantainer__="rsm"
 __website__="https://github.com/rsm-gh/andromeda/blob/master/etc/andromeda/pluggins/RandomPlaylist.py" # optional
 
 
