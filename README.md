@@ -6,7 +6,7 @@
 
 Andromeda is a music player powered by Python3, GTK3 and pyVLC. I code it for GNU/Linux Systems and its look and behavior is pretty similar to [Banshee](http://banshee.fm).
 
-Currently it can reproduce music, manage lists and queues, but the database import and modification stills to be finished / debugged. 
+Currently it can reproduce music, manage lists and queues, but the database import and modification stills to be finished / debugged. Also it is pretty easy to add pluggins to customize or code new features. Examples can be found under `etc/andromeda/pluggins`.
 
 Also, despite some widgets optimization, I find that the interface is a little bit slower than banshee which is mainly coded in C++. I noticed this with a database containing 14'650 tracks.
 
