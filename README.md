@@ -1,4 +1,5 @@
-*Unless you want to try experimental software or contribute to the project you should not yet use the player. I stopped developing it because I moved to spotify... but I may continue some day.*
+*Unless you want to try experimental software or contribute to the project you should not yet use the player. 
+I stopped developing it because I moved to spotify...
 
 ----------------------------------------------------------------
 
@@ -18,3 +19,21 @@ Remark: Despite some widgets optimization, I find that the interface is a little
     * ArchLinux: `?`
 
 3. Execute the setup file.
+
+## Features
+
+[..todo]
+
+
+### console commands
+```
+Usage: andromeda [options..]
+
+Playback Control Options
+
+    --next                     Play the next track.
+    --play                     Start playback
+    --play-pause               Toggle playback
+    --pause                    Pause playback
+    --stop                     Completely stop playback
+```
