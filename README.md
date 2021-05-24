@@ -1,7 +1,3 @@
-*Unless you want to try experimental software or contribute to the project you should not yet use the player. 
-I stopped developing it because I moved to spotify...
-
-----------------------------------------------------------------
 
 ![Andromeda GUI](https://raw.githubusercontent.com/rsm-gh/andromeda/master/usr/share/doc/andromeda/preview.jpeg)
 
