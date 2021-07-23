@@ -1,3 +1,7 @@
+> This software is in a "experimental" stage and I didn't finished it because I moved to Spotify. I may finish it one day and include [my video player](https://github.com/rsm-gh/vlist-player).
+
+-----------
+
 
 ![Andromeda GUI](https://raw.githubusercontent.com/rsm-gh/andromeda/master/usr/share/doc/andromeda/preview.jpeg)
 
