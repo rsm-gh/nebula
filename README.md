@@ -25,7 +25,7 @@ Remark: Despite some widgets optimization, I find that the interface is a little
 [..todo]
 
 
-### console commands
+### Console Commands
 ```
 Usage: andromeda [options..]
 
@@ -37,3 +37,7 @@ Playback Control Options
     --pause                    Pause playback
     --stop                     Completely stop playback
 ```
+
+### Pluggins
+
+[..todo]
