@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 #
 
-#  Copyright (C) 2016, 2019-2020  Rafael Senties Martinelli 
+#  Copyright (C) 2016, 2019-2020, 2022  Rafael Senties Martinelli 
 #
 #  This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License 3 as published by
@@ -26,7 +26,7 @@
     file by refering at the widget's label. This can cause problems and I'd like
     to do it by using the widget's id.
     
-        >> How can I retrive the widget's id??
+        >> How can I retrieve the widget's id??
 
 """
 
@@ -38,10 +38,10 @@
 
 import gi
 gi.require_version('Gtk', '3.0')
-gi.require_version('AppIndicator3', '0.1')
+gi.require_version('AyatanaAppIndicator3', '0.1')
 gi.require_version('Notify', '0.7')
 from gi.repository import Gtk, GLib, GObject, Gdk, Notify
-from gi.repository import AppIndicator3 as appindicator
+from gi.repository import AyatanaAppIndicator3 as appindicator
 from gi.repository.GdkPixbuf import Pixbuf
 
 

@@ -15,7 +15,7 @@ Remark: Despite some widgets optimization, I find that the interface is a little
 
 1. Download the [stable branch](https://github.com/rsm-gh/andromeda/archive/master.zip).
 2. Install the dependencies:
-    * Debian based distributions: `libgtk-3-0, vlc, python3, python3-gi, python3-gi-cairo`
+    * Debian based distributions: `libgtk-3-0, vlc, python3, python3-gi, python3-gi-cairo gir1.2-ayatanaappindicator3-0.1`
     * ArchLinux: `?`
 
 3. Execute the setup file.
