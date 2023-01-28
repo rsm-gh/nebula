@@ -158,7 +158,7 @@ class GUI(Gtk.Window):
         
     def __thread_init(self):
         
-        self.ccp=CCParser(ini_path=PATHS.config, section='Andromeda Music Player')
+        self.ccp=CCParser(ini_path=PATHS.config, section='Nebula Music Player')
         
         Gdk.threads_enter()
         self.startup_progressbar.set_text("Loading the interface...")
@@ -509,7 +509,7 @@ class GUI(Gtk.Window):
         """
             Start the notifications
         """
-        Notify.init('Andromeda Music Player')
+        Notify.init('Nebula Music Player')
 
 
         Gdk.threads_enter()
@@ -521,7 +521,7 @@ class GUI(Gtk.Window):
             Create & start the app (system try) indicator
         """
         self.window_root_is_minimized=False
-        self.indicator = appindicator.Indicator.new_with_path(  'andromeda-indicator',
+        self.indicator = appindicator.Indicator.new_with_path(  'nebula-indicator',
                                                                 'images/logo_x32.png',
                                                                 appindicator.IndicatorCategory.APPLICATION_STATUS,
                                                                 os.path.dirname(os.path.realpath(__file__)))

@@ -1,10 +1,10 @@
 Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
-Upstream-Name: andromeda
+Upstream-Name: nebula
 Source: Interpreted Language
 
 
-File: /usr/share/andromeda/images/startup.jpg
-Copyright:  CC BY 2.0, Wikipedia: https://en.wikipedia.org/wiki/Andromeda_Galaxy#/media/File:Andromeda_Galaxy_(with_h-alpha).jpg
+File: /usr/share/nebula/images/startup.jpg
+Copyright:  CC BY 2.0, Wikipedia: https://en.wikipedia.org/wiki/Crab_Nebula#/media/File:Crab_Nebula.jpg
 
 
 Files: logo*png

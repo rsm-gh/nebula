@@ -1,7 +1,7 @@
 [Desktop Entry]
-Name=Andromeda
-Exec=andromeda
+Name=Nebula
+Exec=nebula
 Terminal=false
 Type=Application
-Icon=/usr/share/andromeda/view/images/logo_x64.png
+Icon=/usr/share/nebula/view/images/logo_x64.png
 Categories=GTK;Audio;Music;Player;

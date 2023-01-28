@@ -18,7 +18,7 @@
 
 
 """
-    This pluggin is an exemple of how to code extensions for the Andromeda Music Player.
+    This pluggin is an exemple of how to code extensions for the Nebula Music Player.
 """
 
 
@@ -30,7 +30,7 @@ __title__="Random Playlist"
 __description__="Play a random playlist on startup."
 __version__="16.02.02-01" # Format YY.MM.DD-XX (Year.Month.Day-Day Version)
 __mantainer__="rsm"
-__website__="https://github.com/rsm-gh/andromeda/blob/master/etc/andromeda/pluggins/RandomPlaylist.py" # optional
+__website__="https://github.com/rsm-gh/nebula/blob/master/etc/nebula/pluggins/RandomPlaylist.py" # optional
 
 
 def load_imports():
@@ -58,7 +58,7 @@ def load_imports():
 class Main:
     """
         The plugin must have a `Main` class. This is the one that will be 
-        executed by Andromeda at the initialization.
+        executed by Nebula at the initialization.
      
         *Threads should always be used so the GUI don't get blocked. 
     """
@@ -66,10 +66,10 @@ class Main:
     
     def __init__(self, parent, main_initialization):
         """
-            `parent` is the Andromeda instance. With it you have acces to all the 
+            `parent` is the Nebula instance. With it you have access to all the 
              objects of the player.
             
-            `main_initialization` informs if the method is being called at the Andrmeda startup.
+            `main_initialization` informs if the method is being called at the Nebula startup.
             It helps to differenciate when the pluggin is activated from the pluggin window.
         """       
         self.__parent=parent

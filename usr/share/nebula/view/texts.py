@@ -18,7 +18,7 @@
 
 
 
-TEXT_PROGAM_NAME='Andromeda Music Player'
+TEXT_PROGAM_NAME='Nebula Music Player'
 TEXT_CANT_DELETE_ALL_ALBUMS="The 'All Albums' selection can not be deleted. Only the other albums will be deleted."
 TEXT_CANT_DELETE_ALL_ARTISTS="The 'All Artists' selection can not be deleted. Only the other artists will be deleted."
 TEXT_CANT_DELETE_ALL_GENRES="The 'All Genres' selection can not be deleted. Only the other genres will be deleted."

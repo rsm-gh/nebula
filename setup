@@ -15,7 +15,7 @@
 #   along with this program; if not, write to the Free Software Foundation,
 #   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA.
 
-ANDROMEDA_VERSION="Dev2019"
+NEBULA_VERSION="Dev2019"
 NUMBER_OF_STEPS=2
 
 if [ "$EUID" -ne 0 ]
@@ -24,7 +24,7 @@ if [ "$EUID" -ne 0 ]
 fi
 
 echo -e "\n\e[00;33m **************************************** \e[00m"
-echo -e "\e[00;33m *** Installing Andromeda v$ANDROMEDA_VERSION *** \e[00m"
+echo -e "\e[00;33m *** Installing Nebula v$NEBULA_VERSION *** \e[00m"
 echo -e "\e[00;33m **************************************** \e[00m\n"
 
 
@@ -61,18 +61,18 @@ install_files "/usr/bin"
 
 install_files "/usr/share/applications"
 
-install_files "/usr/share/andromeda"
-install_files "/usr/share/andromeda/view"
-install_files "/usr/share/andromeda/view/CellRenderers"
-install_files "/usr/share/andromeda/view/images"
-install_files "/usr/share/andromeda/model"
-install_files "/usr/share/andromeda/controller"
+install_files "/usr/share/nebula"
+install_files "/usr/share/nebula/view"
+install_files "/usr/share/nebula/view/CellRenderers"
+install_files "/usr/share/nebula/view/images"
+install_files "/usr/share/nebula/model"
+install_files "/usr/share/nebula/controller"
 
-install_files "/usr/share/doc/andromeda"
-install_files "/usr/share/doc/andromeda/code"
+install_files "/usr/share/doc/nebula"
+install_files "/usr/share/doc/nebula/code"
 
-install_files "/etc/andromeda"
-install_files "/etc/andromeda/pluggins"
+install_files "/etc/nebula"
+install_files "/etc/nebula/pluggins"
 
 
 
@@ -80,12 +80,12 @@ install_files "/etc/andromeda/pluggins"
 #
 echo -e "\e[00;32m Replacing variables...\e[00m"
 
-sed -i "s/__ANDROMEDA_VERSION__/$ANDROMEDA_VERSION/g" "/usr/share/andromeda/view/gui.glade"
+sed -i "s/__NEBULA_VERSION__/$NEBULA_VERSION/g" "/usr/share/nebula/view/gui.glade"
 
 
 ##
 ## End
 ##
 echo -e "\n\e[00;33m ****************************************** \e[00m"
-echo -e "\e[00;33m *** Andromeda v$ANDROMEDA_VERSION is installed *** \e[00m"
+echo -e "\e[00;33m *** Nebula v$NEBULA_VERSION is installed *** \e[00m"
 echo -e "\e[00;33m ****************************************** \e[00m\n"

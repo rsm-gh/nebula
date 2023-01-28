@@ -23,21 +23,21 @@ if [ "$EUID" -ne 0 ]
   exit
 fi
 
-if [ -f /usr/bin/andromeda ]; then
-	rm -f /usr/bin/andromeda
+if [ -f /usr/bin/nebula ]; then
+	rm -f /usr/bin/nebula
 fi
 
-if [ -d /usr/share/andromeda ]; then
-	rm -rf /usr/share/andromeda
+if [ -d /usr/share/nebula ]; then
+	rm -rf /usr/share/nebula
 fi
 
-if [ -d /usr/share/doc/andromeda ]; then
-	rm -rf /usr/share/doc/andromeda
+if [ -d /usr/share/doc/nebula ]; then
+	rm -rf /usr/share/doc/nebula
 fi
 
 if [ "$1" != "-s" ]; then
-	if [ -d /etc/andromeda/ ]; then
-	   rm -rf /etc/andromeda
+	if [ -d /etc/nebula/ ]; then
+	   rm -rf /etc/nebula
 	fi
 fi
 
