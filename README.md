@@ -3,7 +3,7 @@
 > This software is in a "experimental" stage because I moved to Spotify before finishing it. I may continue one day and include [my video player](https://github.com/rsm-gh/vlist-player).
 
 
-Nebula is a music player powered with Python3, GTK+, Sqlite and pyVLC. I code it for GNU/Linux Systems and its look and behavior is pretty similar to [Banshee](https://www.banshee-project.org/).
+Nebula is a music player powered with Python3, GTK3, Sqlite and VLC. I code it for GNU/Linux Systems and its look and behavior is pretty similar to [Banshee](https://www.banshee-project.org/).
 
 Currently it can reproduce music, manage lists and queues, but the database import and modification stills to be finished / debugged. Also it is pretty easy to add pluggins to customize or code new features, examples can be found in `etc/nebula/pluggins`.
 
